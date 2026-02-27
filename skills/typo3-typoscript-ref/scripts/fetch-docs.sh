@@ -101,11 +101,20 @@ if [[ -z "$TREE_JSON" ]]; then
     exit 1
 fi
 
+# Source-specific path filter (only download files matching this prefix)
+DOC_PATH_FILTER="Documentation/"
+case "$SOURCE" in
+    coreapi) DOC_PATH_FILTER="Documentation/ApiOverview/Fluid/" ;;
+esac
+
 # Filter to .rst files only, excluding non-content paths
 RST_FILES=()
 while IFS= read -r filepath; do
     # Only .rst files
     [[ "$filepath" != *.rst ]] && continue
+
+    # Apply source-specific path filter
+    [[ "$filepath" != "${DOC_PATH_FILTER}"* ]] && continue
 
     # Exclude non-content directories
     [[ "$filepath" == *"_includes/"* ]] && continue
