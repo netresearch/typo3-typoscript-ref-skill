@@ -237,9 +237,14 @@ mode_keyword() {
     docs_version=$(map_version "$major" "typoscript")
     echo "Docs version: ${docs_version}" >&2
 
-    local ts_cache="${CACHE_DIR}/${docs_version}/typoscript"
-    if ! check_cache "$docs_version" "typoscript"; then
-        exit 1
+    # Cache path uses major version (matching fetch-docs.sh output)
+    local ts_cache="${CACHE_DIR}/${major}/typoscript"
+    if ! check_cache "$major" "typoscript"; then
+        # Fallback: try docs_version path (legacy cache layout)
+        ts_cache="${CACHE_DIR}/${docs_version}/typoscript"
+        if ! check_cache "$docs_version" "typoscript"; then
+            exit 1
+        fi
     fi
 
     local topic_index="${REFS_DIR}/topic-index.md"
@@ -317,7 +322,12 @@ mode_keyword() {
     if [[ "$WITH_FLUID" == true ]]; then
         local fluid_version
         fluid_version=$(map_version "$major" "fluid")
-        local fluid_cache="${CACHE_DIR}/${fluid_version}/fluid"
+        # Cache path uses major version (matching fetch-docs.sh output)
+        local fluid_cache="${CACHE_DIR}/${major}/fluid"
+        if [[ ! -d "$fluid_cache" ]]; then
+            # Fallback: try docs_version path (legacy cache layout)
+            fluid_cache="${CACHE_DIR}/${fluid_version}/fluid"
+        fi
 
         if [[ -d "$fluid_cache" ]]; then
             echo "--- Fluid docs (${fluid_version}) ---" >&2
@@ -523,7 +533,7 @@ except ImportError:
 with open('${config_file}') as f:
     config = yaml.safe_load(f)
 
-sniffs = config.get('sniffs', {}) if config else {}
+sniffs = config.get('sniffs', []) if config else []
 if not sniffs:
     print('No sniff configuration found in config file.')
     sys.exit(0)
@@ -532,13 +542,21 @@ print('Active lint rules from project config:')
 print('| Rule | Status |')
 print('|------|--------|')
 
-for sniff_name, sniff_config in sorted(sniffs.items()):
-    if isinstance(sniff_config, dict):
-        disabled = sniff_config.get('disabled', False)
-        status = 'disabled' if disabled else 'active'
-    else:
-        status = 'active'
-    print(f'| {sniff_name} | {status} |')
+if isinstance(sniffs, list):
+    for sniff in sniffs:
+        if isinstance(sniff, dict):
+            name = sniff.get('class', 'unknown')
+            disabled = sniff.get('disabled', False)
+            status = 'disabled' if disabled else 'active'
+            print(f'| {name} | {status} |')
+elif isinstance(sniffs, dict):
+    for sniff_name, sniff_config in sorted(sniffs.items()):
+        if isinstance(sniff_config, dict):
+            disabled = sniff_config.get('disabled', False)
+            status = 'disabled' if disabled else 'active'
+        else:
+            status = 'active'
+        print(f'| {sniff_name} | {status} |')
 " 2>/dev/null || echo "Error parsing lint config." >&2
     else
         echo "No project lint config found (.typoscript-lint.yml, typoscript-lint.yml, tslint.yml)."
