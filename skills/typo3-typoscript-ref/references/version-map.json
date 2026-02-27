@@ -1,8 +1,8 @@
 {
   "typo3_to_docs": {
-    "12": { "typoscript": "12.4", "fluid": "2.12", "viewhelpers": "12.4", "coreapi": "12.4" },
-    "13": { "typoscript": "13.4", "fluid": "4.3", "viewhelpers": "13.4", "coreapi": "13.4" },
-    "14": { "typoscript": "main", "fluid": "5.0", "viewhelpers": "main", "coreapi": "main" }
+    "12": { "typoscript": "12.4", "fluid": "2.12.0", "viewhelpers": "12.4", "coreapi": "12.4" },
+    "13": { "typoscript": "13.4", "fluid": "4.3.0", "viewhelpers": "13.4", "coreapi": "13.4" },
+    "14": { "typoscript": "main", "fluid": "5.0.0", "viewhelpers": "main", "coreapi": "main" }
   },
   "github_repos": {
     "typoscript": "TYPO3-Documentation/TYPO3CMS-Reference-Typoscript",
