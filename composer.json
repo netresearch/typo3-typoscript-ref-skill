@@ -1,0 +1,20 @@
+{
+  "name": "netresearch/typo3-typoscript-ref-skill",
+  "description": "TYPO3 TypoScript, TSconfig and Fluid reference lookup for AI agents",
+  "type": "ai-agent-skill",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Netresearch DTT GmbH",
+      "email": "plugins@netresearch.de",
+      "homepage": "https://www.netresearch.de/",
+      "role": "Manufacturer"
+    }
+  ],
+  "require": {
+    "netresearch/composer-agent-skill-plugin": "*"
+  },
+  "extra": {
+    "ai-agent-skill": "skills/typo3-typoscript-ref/SKILL.md"
+  }
+}
