@@ -7,7 +7,7 @@
   "github_repos": {
     "typoscript": "TYPO3-Documentation/TYPO3CMS-Reference-Typoscript",
     "fluid": "TYPO3/Fluid",
-    "viewhelpers": "TYPO3-Documentation/TYPO3CMS-ViewHelperReference",
+    "viewhelpers": "TYPO3-Documentation/TYPO3CMS-Reference-ViewHelper",
     "coreapi": "TYPO3-Documentation/TYPO3CMS-Reference-CoreApi"
   },
   "docs_base_urls": {
