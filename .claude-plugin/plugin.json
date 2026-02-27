@@ -1,0 +1,13 @@
+{
+  "name": "typo3-typoscript-ref",
+  "version": "1.0.0",
+  "description": "TYPO3 TypoScript, TSconfig and Fluid reference with version-aware local lookup",
+  "repository": "https://github.com/netresearch/typo3-typoscript-ref-skill",
+  "license": "MIT",
+  "author": {
+    "name": "Netresearch DTT GmbH",
+    "url": "https://www.netresearch.de/"
+  },
+  "keywords": ["typo3", "typoscript", "tsconfig", "fluid", "reference"],
+  "skills": ["./skills/typo3-typoscript-ref"]
+}
