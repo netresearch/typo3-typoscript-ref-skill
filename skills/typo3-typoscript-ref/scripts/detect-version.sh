@@ -27,7 +27,7 @@ find_composer_file() {
     local filename="$2"
     local level=0
 
-    while [[ "$level" -lt 5 ]]; do
+    while [[ "$level" -le 5 ]]; do
         if [[ -f "${dir}/${filename}" ]]; then
             echo "${dir}/${filename}"
             return 0
