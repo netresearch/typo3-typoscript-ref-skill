@@ -247,13 +247,40 @@ if [[ "$ANNOTATE" == true ]] && [[ -f "$ANNOTATIONS_FILE" ]]; then
     echo ""
     echo "Applying annotations..."
 
-    ANNOTATED=0
     python3 -c "
 import json, os, sys
 
 annotations_file = '${ANNOTATIONS_FILE}'
 output_dir = '${OUTPUT_DIR}'
 version = '${VERSION}'
+
+# Explicit mapping from annotation keys to actual cache file paths (relative to output_dir).
+# Annotation keys use logical names with hyphens; cache paths use lowercased, hyphen-free names
+# that match the RST directory structure after conversion.
+PATH_MAP = {
+    'content-objects/fluidtemplate': 'contentobjects/fluidtemplate.md',
+    'content-objects/pageview':      'contentobjects/pageview.md',
+    'content-objects/hmenu':         'contentobjects/hmenu.md',
+    'content-objects/content':       'contentobjects/content.md',
+    'content-objects/user':          'contentobjects/useranduserint.md',
+    'content-objects/coa':           'contentobjects/coaandcoaint.md',
+    'content-objects/records':       'contentobjects/records.md',
+    'frontend/conditions':           'conditions.md',
+    'frontend/config':               'toplevelobjects/config.md',
+    'about/usage':                   'usingsetting/entering.md',
+    'functions/stdwrap':             'functions/stdwrap.md',
+    'functions/typolink':            'functions/typolink.md',
+    'data-processors/database-query-processor': 'dataprocessing/databasequeryprocessor.md',
+    'data-processors/menu-processor':           'dataprocessing/menuprocessor.md',
+    'backend/page-tsconfig/tceform': 'pagetsconfig/tceform.md',
+}
+
+LEVEL_LABELS = {
+    'required':    'REQUIRED',
+    'deprecated':  'DEPRECATED',
+    'recommended': 'RECOMMENDED',
+    'tip':         'TIP',
+}
 
 with open(annotations_file) as f:
     all_annotations = json.load(f)
@@ -264,26 +291,40 @@ if not annotations:
     sys.exit(0)
 
 count = 0
-for rel_path, ann in annotations.items():
-    md_file = os.path.join(output_dir, rel_path + '.md')
+skipped = 0
+for ann_key, ann in annotations.items():
+    cache_rel = PATH_MAP.get(ann_key)
+    if cache_rel is None:
+        print(f'  Warning: no path mapping for annotation key \"{ann_key}\"', file=sys.stderr)
+        skipped += 1
+        continue
+
+    md_file = os.path.join(output_dir, cache_rel)
     if not os.path.isfile(md_file):
-        # Try with different path patterns
+        print(f'  Warning: cache file not found: {md_file}', file=sys.stderr)
+        skipped += 1
         continue
 
     level = ann.get('level', 'tip')
     message = ann.get('message', '')
     if not message:
+        skipped += 1
         continue
 
-    level_labels = {
-        'required': 'Important',
-        'recommended': 'Recommendation',
-        'deprecated': 'Deprecated',
-        'tip': 'Tip',
-    }
-    label = level_labels.get(level, level.capitalize())
+    label = LEVEL_LABELS.get(level, level.upper())
+    blockquote_lines = [f'> **{label} (v{version}):** {message}']
 
-    blockquote = f'> **{label}:** {message}\n\n'
+    recipe = ann.get('recipe')
+    migration = ann.get('migration')
+    if recipe or migration:
+        parts = []
+        if recipe:
+            parts.append(f'Recipe: {recipe}')
+        if migration:
+            parts.append(f'Migration: {migration}')
+        blockquote_lines.append('> ' + ' | '.join(parts))
+
+    blockquote = '\n'.join(blockquote_lines) + '\n\n'
 
     with open(md_file, 'r') as f:
         content = f.read()
@@ -293,7 +334,7 @@ for rel_path, ann in annotations.items():
 
     count += 1
 
-print(f'Applied {count} annotations')
+print(f'Applied {count} annotations ({skipped} skipped)')
 "
 fi
 
