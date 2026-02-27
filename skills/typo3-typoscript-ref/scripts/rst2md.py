@@ -28,8 +28,8 @@ def convert_rst_to_md(text: str) -> str:
             i = _skip_directive_block(lines, i)
             continue
 
-        # Strip reference targets (.. _label:)
-        if re.match(r'^\.\.\s+_[^:]+:\s*$', stripped):
+        # Strip reference targets (.. _label:) and link targets (.. _label: url)
+        if re.match(r'^\.\.\s+_[^:]+:', stripped):
             i += 1
             continue
 
@@ -81,6 +81,24 @@ def convert_rst_to_md(text: str) -> str:
         # Convert rubric (strip)
         if re.match(r'^(\s*)\.\.\s+rubric::', stripped):
             i = _skip_directive_block(lines, i)
+            continue
+
+        # Convert youtube directives to a link
+        youtube_match = re.match(r'^(\s*)\.\.\s+youtube::\s+(.*)', line)
+        if youtube_match:
+            video_id = youtube_match.group(2).strip()
+            output.append(f'> Video: https://www.youtube.com/watch?v={video_id}')
+            i = _skip_directive_block(lines, i)
+            continue
+
+        # Strip unknown rST directives (directory-tree, card-grid, etc.)
+        if re.match(r'^(\s*)\.\.\s+[\w-]+::', stripped):
+            i = _skip_directive_block(lines, i)
+            continue
+
+        # Strip rST comments (.. followed by text — not a directive, not a reference)
+        if re.match(r'^\.\.\s+\w', stripped):
+            i += 1
             continue
 
         # Convert section headers (underline/overline style)
