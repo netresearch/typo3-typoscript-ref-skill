@@ -15,7 +15,10 @@ Version-aware TypoScript, TSconfig and Fluid reference lookup for Claude Code wi
 ## Installation
 
 ### Claude Code Marketplace
-(upcoming)
+```bash
+/plugin marketplace add netresearch/claude-code-marketplace
+```
+Then install the skill via `/plugin`.
 
 ### Composer
 ```bash
