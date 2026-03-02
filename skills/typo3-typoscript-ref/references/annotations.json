@@ -41,8 +41,8 @@
   },
   "13.4": {
     "content-objects/fluidtemplate": {
-      "level": "deprecated",
-      "message": "FLUIDTEMPLATE is deprecated since v13. Use PAGEVIEW for page templates instead.",
+      "level": "recommended",
+      "message": "PAGEVIEW is the recommended page rendering approach in v13+. FLUIDTEMPLATE continues to work but PAGEVIEW requires less configuration.",
       "recipe": "page-setup",
       "migration": "migration-v12-to-v13.md#fluidtemplate"
     },
@@ -110,8 +110,8 @@
   },
   "main": {
     "content-objects/fluidtemplate": {
-      "level": "required",
-      "message": "FLUIDTEMPLATE is removed in TYPO3 v14. Use PAGEVIEW instead.",
+      "level": "deprecated",
+      "message": "FLUIDTEMPLATE is expected to be removed in a future TYPO3 version. Migrate to PAGEVIEW now.",
       "recipe": "page-setup",
       "migration": "migration-v13-to-v14.md#fluidtemplate"
     },

@@ -47,10 +47,10 @@ find_composer_file() {
 # Extract version from composer.lock (exact installed version)
 extract_from_lock() {
     local lockfile="$1"
-    python3 -c "
-import json, sys
+    LOCKFILE="$lockfile" python3 -c "
+import json, os, sys
 try:
-    data = json.load(open('${lockfile}'))
+    data = json.load(open(os.environ['LOCKFILE']))
     for pkg in data.get('packages', []) + data.get('packages-dev', []):
         if pkg['name'] == 'typo3/cms-core':
             print(pkg['version'])
@@ -64,10 +64,10 @@ except Exception:
 # Extract version from composer.json (requirement constraint)
 extract_from_json() {
     local jsonfile="$1"
-    python3 -c "
-import json, sys
+    JSONFILE="$jsonfile" python3 -c "
+import json, os, sys
 try:
-    data = json.load(open('${jsonfile}'))
+    data = json.load(open(os.environ['JSONFILE']))
     for section in ['require', 'require-dev']:
         version = data.get(section, {}).get('typo3/cms-core', '')
         if version:
