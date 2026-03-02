@@ -12,6 +12,28 @@ Version-aware TypoScript, TSconfig and Fluid reference lookup for Claude Code wi
 - Project-specific lint rule detection (helmich/typo3-typoscript-lint)
 - Debugging reference for common TypoScript error messages
 
+## Why This Skill?
+
+AI coding agents frequently hallucinate TypoScript properties, invent non-existent ViewHelpers, or suggest patterns that were deprecated several TYPO3 versions ago. Generic documentation tools like Context7 provide raw library docs but lack the TYPO3-specific curation needed to produce correct, modern TypoScript.
+
+This skill solves that by providing **structured, version-aware reference data** tailored for AI agents:
+
+| Capability | This Skill | Context7 / Generic Docs |
+|-----------|-----------|------------------------|
+| Version detection | Auto-detects from `composer.json` | Manual version specification |
+| Offline usage | Local cache after first fetch | API call per request |
+| Best practice annotations | Injected into docs (deprecated/required/recommended) | Not available |
+| Migration guides | Before/after code with step-by-step instructions (v12-v13, v13-v14) | Not available |
+| Ready-to-use recipes | 14 curated patterns (page setup, menus, data processors, ...) | Raw documentation only |
+| Code review mode | Deprecation checks, checklists, lint rule detection | Not available |
+| Debugging support | Maps error messages to solutions | Not available |
+| TypoScript lint integration | Reads project `typoscript-lint.yml` config | Not available |
+| Scope | TypoScript, TSconfig, Fluid, ViewHelpers | General-purpose |
+
+### Designed for Agent Workflows
+
+The skill enforces correctness through **rules**: agents must look up references before writing TypoScript, follow annotation levels, and check project lint rules. This prevents the most common AI mistakes — using removed properties, mixing v12 and v13 syntax, or ignoring site-specific coding standards.
+
 ## Installation
 
 ### Claude Code Marketplace
