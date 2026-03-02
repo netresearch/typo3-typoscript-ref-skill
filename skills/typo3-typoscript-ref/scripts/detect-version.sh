@@ -8,10 +8,18 @@ set -euo pipefail
 SEARCH_DIR="${PWD}"
 FALLBACK="main"
 
+require_arg() {
+    if [[ -z "${2:-}" ]] || [[ "${2:-}" == --* ]]; then
+        echo "Error: $1 requires a value" >&2
+        exit 1
+    fi
+}
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --path)
-            SEARCH_DIR="$2"
+            require_arg "$1" "${2:-}"
+            SEARCH_DIR="${2}"
             shift 2
             ;;
         *)

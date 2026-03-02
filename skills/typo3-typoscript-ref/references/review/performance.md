@@ -9,13 +9,13 @@
 
 ### COA vs COA_INT
 - `COA` — cached content object, output stored in page cache
-- `COA_INT` — uncached content object, rendered on every request
-- **Critical**: ONE `COA_INT` anywhere on the page makes the entire page uncacheable
+- `COA_INT` — uncached content object, rendered on every request within an otherwise cached page
+- **Note**: Pages with `COA_INT` are still cached, but contain placeholder markers. On each request the cached page is loaded and only the INT sections are re-rendered. This is more efficient than disabling the page cache entirely.
 
 ### USER vs USER_INT
 - Same principle as COA/COA_INT, but for PHP userFunc calls
 - `USER` — result is cached with the page
-- `USER_INT` — called on every request, bypasses page cache
+- `USER_INT` — called on every request; the page is cached with a placeholder that is replaced per request
 - Only use `USER_INT` when genuinely dynamic content is required (e.g., personalized output)
 
 ### stdWrap.cache
@@ -141,8 +141,8 @@ lib.news {
 
 | Pattern | Impact | Alternative |
 |---------|--------|-------------|
-| `USER_INT` | Entire page becomes uncacheable | `USER` + cache tags |
-| `COA_INT` | Entire page becomes uncacheable | `COA` |
+| `USER_INT` | Per-request rendering of this object (page cached with placeholders) | `USER` + cache tags |
+| `COA_INT` | Per-request rendering of this object (page cached with placeholders) | `COA` |
 | `config.no_cache = 1` | All pages permanently uncacheable | Never use in production |
 | Nested `CONTENT` queries | N+1 database queries | JOIN or single DataProcessor |
 | Large `stdWrap` chains | Sequential processing overhead | Direct property assignment |

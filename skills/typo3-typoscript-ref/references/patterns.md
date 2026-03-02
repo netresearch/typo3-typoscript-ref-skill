@@ -168,12 +168,9 @@ lib.currentTime = COA_INT
 lib.currentTime.10 = TEXT
 lib.currentTime.10.data = date:U
 lib.currentTime.10.strftime = %H:%M
-
-# Avoid: makes entire page uncacheable
-page.10 = USER_INT
 ```
 
-Prefer `COA_INT` over `USER_INT`. `USER_INT` makes the **whole page** uncacheable.
+Both `COA_INT` and `USER_INT` render per request while the rest of the page stays cached (placeholder-based). Prefer `COA_INT` over `USER_INT` where possible — each INT object adds per-request overhead.
 
 ### CONTENT cObject vs DatabaseQueryProcessor
 
