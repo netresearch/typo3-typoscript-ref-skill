@@ -48,6 +48,12 @@ if [[ -z "$VERSION" ]]; then
     exit 1
 fi
 
+if ! command -v gh &>/dev/null; then
+    echo "Error: 'gh' (GitHub CLI) is required but not found." >&2
+    echo "Install it: https://cli.github.com/" >&2
+    exit 1
+fi
+
 # Validate source
 case "$SOURCE" in
     typoscript|fluid|viewhelpers|coreapi) ;;
@@ -58,23 +64,22 @@ case "$SOURCE" in
 esac
 
 # Resolve repo and branch from version-map.json
-REPO=$(python3 -c "
-import json, sys
-data = json.load(open('${VERSION_MAP}'))
-repo = data.get('github_repos', {}).get('${SOURCE}', '')
+REPO=$(_VERSION_MAP="$VERSION_MAP" _SOURCE="$SOURCE" python3 -c "
+import json, os, sys
+data = json.load(open(os.environ['_VERSION_MAP']))
+source = os.environ['_SOURCE']
+repo = data.get('github_repos', {}).get(source, '')
 if not repo:
-    print('Error: no repo for source ${SOURCE}', file=sys.stderr)
+    print(f'Error: no repo for source {source}', file=sys.stderr)
     sys.exit(1)
 print(repo)
 ")
 
-BRANCH=$(python3 -c "
-import json, sys
-data = json.load(open('${VERSION_MAP}'))
-# The version passed in might be a docs version directly (like '13.4' or 'main')
-# or it could be a TYPO3 major version ('13') that needs mapping
-version = '${VERSION}'
-source = '${SOURCE}'
+BRANCH=$(_VERSION_MAP="$VERSION_MAP" _VERSION="$VERSION" _SOURCE="$SOURCE" python3 -c "
+import json, os, sys
+data = json.load(open(os.environ['_VERSION_MAP']))
+version = os.environ['_VERSION']
+source = os.environ['_SOURCE']
 
 # First check if it's a TYPO3 major version that needs mapping
 typo3_map = data.get('typo3_to_docs', {})
@@ -256,12 +261,12 @@ if [[ "$ANNOTATE" == true ]] && [[ -f "$ANNOTATIONS_FILE" ]]; then
     echo ""
     echo "Applying annotations..."
 
-    python3 -c "
+    _ANNOTATIONS_FILE="$ANNOTATIONS_FILE" _OUTPUT_DIR="$OUTPUT_DIR" _VERSION="$VERSION" python3 -c "
 import json, os, sys
 
-annotations_file = '${ANNOTATIONS_FILE}'
-output_dir = '${OUTPUT_DIR}'
-version = '${VERSION}'
+annotations_file = os.environ['_ANNOTATIONS_FILE']
+output_dir = os.environ['_OUTPUT_DIR']
+version = os.environ['_VERSION']
 
 # Explicit mapping from annotation keys to actual cache file paths (relative to output_dir).
 # Annotation keys use logical names with hyphens; cache paths use lowercased, hyphen-free names

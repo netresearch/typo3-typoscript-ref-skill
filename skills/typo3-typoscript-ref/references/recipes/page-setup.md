@@ -23,6 +23,8 @@ page {
         absRefPrefix = auto
         prefixLocalAnchors = all
         removeDefaultJS = external
+        # Note: compressJs/compressCss/concatenateJs/concatenateCss removed in v13+.
+        # Use external build tools (Vite, Webpack) for asset optimization instead.
         compressJs = 1
         compressCss = 1
         concatenateJs = 1
@@ -103,7 +105,7 @@ page {
 config {
     no_cache = 0
     sendCacheHeaders = 1
-    contentObjectExceptionHandler = 0
+    # contentObjectExceptionHandler = 0  # DEV ONLY — shows exceptions. Remove in production!
     linkVars = L
     sys_language_uid = 0
     language = en
@@ -180,7 +182,7 @@ page {
 config {
     no_cache = 0
     sendCacheHeaders = 1
-    contentObjectExceptionHandler = 0
+    # contentObjectExceptionHandler = 0  # DEV ONLY — shows exceptions. Remove in production!
 }
 ```
 
@@ -275,5 +277,5 @@ lib.dynamicContent {
 - v13+ introduces `PAGEVIEW` which uses a convention-based directory structure under `pages/` and resolves templates based on the backend layout identifier.
 - In v13+, `compressJs`, `compressCss`, `concatenateJs`, `concatenateCss` have been removed. Use external build tools instead.
 - `absRefPrefix = auto` is essential for subfolder installations and CLI-generated URLs.
-- `contentObjectExceptionHandler = 0` should only be set in development. In production, use `1` to prevent broken pages.
+- `contentObjectExceptionHandler = 0` is commented out by default. Only enable in development for debugging. In production, keep `1` (the default) to prevent broken pages.
 - The `lib.dynamicContent` helper is commonly used to render content columns from within Fluid templates.

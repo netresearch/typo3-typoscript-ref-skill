@@ -133,12 +133,12 @@ map_version() {
     local major="$1"
     local source="${2:-typoscript}"
 
-    python3 -c "
-import json, sys
-data = json.load(open('${REFS_DIR}/version-map.json'))
+    _REFS_DIR="$REFS_DIR" _VERSION="$major" _SOURCE="$source" python3 -c "
+import json, os, sys
+data = json.load(open(os.path.join(os.environ['_REFS_DIR'], 'version-map.json')))
 typo3_map = data.get('typo3_to_docs', {})
-version = '${major}'
-source = '${source}'
+version = os.environ['_VERSION']
+source = os.environ['_SOURCE']
 
 if version in typo3_map and source in typo3_map[version]:
     print(typo3_map[version][source])
@@ -519,18 +519,19 @@ mode_lint_rules() {
         echo ""
 
         # Parse YAML with Python to extract sniff configuration
-        python3 -c "
-import sys
+        _CONFIG_FILE="$config_file" python3 -c "
+import os, sys
+config_file = os.environ['_CONFIG_FILE']
 try:
     import yaml
 except ImportError:
     # Fallback: simple text-based parsing
     print('(yaml module not available, showing raw config)')
-    with open('${config_file}') as f:
+    with open(config_file) as f:
         print(f.read())
     sys.exit(0)
 
-with open('${config_file}') as f:
+with open(config_file) as f:
     config = yaml.safe_load(f)
 
 sniffs = config.get('sniffs', []) if config else []
@@ -558,6 +559,8 @@ elif isinstance(sniffs, dict):
             status = 'active'
         print(f'| {sniff_name} | {status} |')
 " 2>/dev/null || echo "Error parsing lint config." >&2
+
+    # No project lint config found
     else
         echo "No project lint config found (.typoscript-lint.yml, typoscript-lint.yml, tslint.yml)."
         echo ""

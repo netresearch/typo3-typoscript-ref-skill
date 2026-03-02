@@ -115,7 +115,7 @@ page.10 {
 
 ### v13
 
-- `FLUIDTEMPLATE` is **deprecated** — migrate to `PAGEVIEW`
+- `PAGEVIEW` is the **recommended** page rendering approach (replaces `FLUIDTEMPLATE` for new projects)
 - Introduce Site Sets (`Configuration/Sets/*/config.yaml`)
 - Use `settings.definitions.yaml` for typed settings
 - `PAGEVIEW` auto-resolves templates by controller/action convention
