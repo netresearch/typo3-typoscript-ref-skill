@@ -1,5 +1,5 @@
 {
-  "12.4": {
+  "12": {
     "content-objects/fluidtemplate": {
       "level": "recommended",
       "message": "Consider PAGEVIEW (available in v13+) as the modern replacement for FLUIDTEMPLATE.",
@@ -39,7 +39,7 @@
       "message": "Use TCEFORM to restrict editors to valid choices instead of relying on validation alone. Reduces editor errors at the source."
     }
   },
-  "13.4": {
+  "13": {
     "content-objects/fluidtemplate": {
       "level": "recommended",
       "message": "PAGEVIEW is the recommended page rendering approach in v13+. FLUIDTEMPLATE continues to work but PAGEVIEW requires less configuration.",

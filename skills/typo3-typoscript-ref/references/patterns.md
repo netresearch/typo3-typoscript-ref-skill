@@ -139,7 +139,7 @@ dependencies:
 ### v14
 
 - Site Sets are **mandatory** for extensions providing TypoScript
-- `FLUIDTEMPLATE` is **removed** — use `PAGEVIEW`
+- `FLUIDTEMPLATE` is **deprecated** — use `PAGEVIEW`
 - `sys_template`-based static includes from extensions no longer supported
 - All extension TypoScript must be distributed via Site Sets
 
