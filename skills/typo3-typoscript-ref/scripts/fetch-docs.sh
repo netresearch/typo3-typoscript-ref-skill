@@ -16,19 +16,30 @@ SOURCE="typoscript"
 CACHE_DIR="${SCRIPT_DIR}/../../../cache"
 ANNOTATE=false
 
+# Validate that a flag has a non-empty, non-flag value
+require_arg() {
+    if [[ -z "${2:-}" ]] || [[ "${2:-}" == --* ]]; then
+        echo "Error: $1 requires a value" >&2
+        exit 1
+    fi
+}
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --version)
-            VERSION="$2"
+            require_arg "$1" "${2:-}"
+            VERSION="${2}"
             shift 2
             ;;
         --source)
-            SOURCE="$2"
+            require_arg "$1" "${2:-}"
+            SOURCE="${2}"
             shift 2
             ;;
         --cache-dir)
-            CACHE_DIR="$2"
+            require_arg "$1" "${2:-}"
+            CACHE_DIR="${2}"
             shift 2
             ;;
         --annotate)
@@ -45,6 +56,11 @@ done
 
 if [[ -z "$VERSION" ]]; then
     echo "Error: --version is required" >&2
+    exit 1
+fi
+
+if [[ ! "$VERSION" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    echo "Error: invalid version string: ${VERSION}" >&2
     exit 1
 fi
 
@@ -342,6 +358,18 @@ for ann_key, ann in annotations.items():
 
     with open(md_file, 'r') as f:
         content = f.read()
+
+    # Strip existing annotation (idempotency)
+    while content.startswith('> **'):
+        # Remove lines starting with '> ' until first non-blockquote line
+        lines_list = content.split('\n')
+        idx = 0
+        while idx < len(lines_list) and (lines_list[idx].startswith('> ') or lines_list[idx] == '>'):
+            idx += 1
+        # Skip trailing blank lines after the blockquote
+        while idx < len(lines_list) and lines_list[idx].strip() == '':
+            idx += 1
+        content = '\n'.join(lines_list[idx:])
 
     with open(md_file, 'w') as f:
         f.write(blockquote + content)

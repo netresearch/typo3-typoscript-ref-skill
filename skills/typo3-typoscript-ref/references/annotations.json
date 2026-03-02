@@ -20,7 +20,7 @@
     },
     "content-objects/user": {
       "level": "tip",
-      "message": "USER_INT marks the entire page as uncacheable. Prefer COA_INT to limit uncached rendering to the specific content object."
+      "message": "USER_INT renders this object on every request (page is cached with placeholders). Use sparingly — each INT object adds per-request overhead."
     },
     "functions/stdwrap": {
       "level": "tip",
@@ -76,7 +76,7 @@
     },
     "content-objects/user": {
       "level": "tip",
-      "message": "USER_INT marks the entire page as uncacheable. Use sparingly — prefer COA_INT to limit uncached rendering to the specific content object."
+      "message": "USER_INT renders this object on every request (page is cached with placeholders). Use sparingly — each INT object adds per-request overhead."
     },
     "data-processors/database-query-processor": {
       "level": "recommended",
@@ -88,7 +88,7 @@
     },
     "content-objects/coa": {
       "level": "tip",
-      "message": "COA_INT limits uncached rendering to a single content object without making the whole page uncacheable. Prefer over USER_INT where possible."
+      "message": "COA_INT renders only this object per request while the rest of the page stays cached (placeholder-based). Prefer COA_INT over USER_INT where possible."
     },
     "functions/typolink": {
       "level": "tip",
@@ -133,7 +133,7 @@
     },
     "content-objects/user": {
       "level": "tip",
-      "message": "USER_INT marks the entire page as uncacheable. Use sparingly — prefer COA_INT to scope uncached rendering to a single object."
+      "message": "USER_INT renders this object on every request (page is cached with placeholders). Use sparingly — each INT object adds per-request overhead."
     },
     "content-objects/hmenu": {
       "level": "recommended",

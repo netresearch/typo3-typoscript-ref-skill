@@ -98,7 +98,7 @@ def convert_rst_to_md(text: str) -> str:
 
         # Strip rST comments (.. followed by text — not a directive, not a reference)
         if re.match(r'^\.\.\s+\w', stripped):
-            i += 1
+            i = _skip_directive_block(lines, i)
             continue
 
         # Convert section headers (underline/overline style)

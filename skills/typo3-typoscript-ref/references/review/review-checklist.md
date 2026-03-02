@@ -3,8 +3,8 @@
 ## TypoScript Checklist
 - [ ] No config.no_cache = 1 in production
 - [ ] No hardcoded page UIDs (use constants/settings)
-- [ ] No deprecated cObjects (FLUIDTEMPLATE in v13+, EDITPANEL)
-- [ ] COA_INT/USER_INT used sparingly (each disables page cache)
+- [ ] No deprecated cObjects (FLUIDTEMPLATE deprecated in v14+, EDITPANEL removed in v12)
+- [ ] COA_INT/USER_INT used sparingly (each adds per-request rendering overhead)
 - [ ] stdWrap.override / stdWrap.ifEmpty used correctly (not both)
 - [ ] Conditions use Symfony Expression Language (no legacy bracket syntax)
 - [ ] Copy (<) vs reference (=<) used correctly

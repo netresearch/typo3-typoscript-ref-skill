@@ -124,11 +124,27 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# --- Pre-flight checks ---
+
+if ! command -v python3 &>/dev/null; then
+    echo "Error: 'python3' is required but not found." >&2
+    exit 1
+fi
+
 # --- Helper functions ---
 
 # Detect TYPO3 version (uses detect-version.sh or --version flag)
+validate_version() {
+    local v="$1"
+    if [[ ! "$v" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+        echo "Error: invalid version string: ${v}" >&2
+        exit 1
+    fi
+}
+
 resolve_version() {
     if [[ -n "$VERSION" ]]; then
+        validate_version "$VERSION"
         echo "$VERSION"
         return
     fi
@@ -288,7 +304,7 @@ mode_keyword() {
                     matched_files+=("$file_path")
                 fi
             fi
-        done < <(grep -i "$search_term" "$topic_index" | grep '|' || true)
+        done < <(grep -iF "$search_term" "$topic_index" | grep '|' || true)
     done
 
     local found_any=false
@@ -313,11 +329,24 @@ mode_keyword() {
     # Fallback: grep across all cached .md files if no topic-index match
     if [[ "$found_any" == false ]]; then
         echo "No topic-index match. Searching cache files..." >&2
+        local seen_files=()
         for search_term in "${KEYWORDS[@]}"; do
             local grep_results
-            grep_results=$(grep -ril "$search_term" "$ts_cache" 2>/dev/null || true)
+            grep_results=$(grep -rilF "$search_term" "$ts_cache" 2>/dev/null || true)
             if [[ -n "$grep_results" ]]; then
                 while IFS= read -r match_file; do
+                    # Deduplicate across keywords
+                    local already_seen=false
+                    for seen in "${seen_files[@]+"${seen_files[@]}"}"; do
+                        if [[ "$seen" == "$match_file" ]]; then
+                            already_seen=true
+                            break
+                        fi
+                    done
+                    if [[ "$already_seen" == true ]]; then
+                        continue
+                    fi
+                    seen_files+=("$match_file")
                     local rel
                     rel="${match_file#"${ts_cache}/"}"
                     echo "--- ${rel} (grep match) ---"
@@ -344,7 +373,7 @@ mode_keyword() {
             echo "--- Fluid docs (${fluid_version}) ---" >&2
             for search_term in "${KEYWORDS[@]}"; do
                 local fluid_results
-                fluid_results=$(grep -ril "$search_term" "$fluid_cache" 2>/dev/null || true)
+                fluid_results=$(grep -rilF "$search_term" "$fluid_cache" 2>/dev/null || true)
                 if [[ -n "$fluid_results" ]]; then
                     while IFS= read -r match_file; do
                         local rel
@@ -367,7 +396,7 @@ mode_keyword() {
             echo ""
             echo "=== Deprecation / Migration Notes ==="
             for search_term in "${KEYWORDS[@]}"; do
-                grep -i -A 5 "$search_term" "$deprecations_file" 2>/dev/null || true
+                grep -iF -A 5 "$search_term" "$deprecations_file" 2>/dev/null || true
             done
         else
             echo "Note: deprecations.md not yet available at ${deprecations_file}" >&2
@@ -646,8 +675,9 @@ mode_debug() {
         echo "Suggestions:"
         echo "  - Check the TYPO3 System Log (Admin Tools > Log)"
         echo "  - Check the webserver error log"
-        echo "  - Enable debug output in Site Configuration or TypoScript:"
+        echo "  - Enable debug output in Site Configuration or TypoScript (DEV ONLY — never in production):"
         echo "    config.contentObjectExceptionHandler = 0"
+        echo "    (Remove before deploying to production!)"
     fi
 }
 
