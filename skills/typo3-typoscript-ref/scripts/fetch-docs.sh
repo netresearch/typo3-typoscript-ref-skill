@@ -278,7 +278,7 @@ if [[ "$ANNOTATE" == true ]] && [[ -f "$ANNOTATIONS_FILE" ]]; then
     echo "Applying annotations..."
 
     _ANNOTATIONS_FILE="$ANNOTATIONS_FILE" _OUTPUT_DIR="$OUTPUT_DIR" _VERSION="$VERSION" python3 -c "
-import json, os, sys
+import json, os, re, sys
 
 annotations_file = os.environ['_ANNOTATIONS_FILE']
 output_dir = os.environ['_OUTPUT_DIR']
@@ -322,7 +322,8 @@ annotations = all_annotations.get(version, {})
 if not annotations:
     version_map_path = os.path.join(os.path.dirname(annotations_file), 'version-map.json')
     if os.path.isfile(version_map_path):
-        vmap = json.load(open(version_map_path))
+        with open(version_map_path) as vm:
+            vmap = json.load(vm)
         for major, sources in vmap.get('typo3_to_docs', {}).items():
             if sources.get('typoscript') == version:
                 annotations = all_annotations.get(major, {})
@@ -372,8 +373,9 @@ for ann_key, ann in annotations.items():
     with open(md_file, 'r') as f:
         content = f.read()
 
-    # Strip existing annotation (idempotency — only one annotation expected)
-    if content.startswith('> **'):
+    # Strip existing annotation (idempotency — only one annotation expected).
+    # Match only our annotation format, not converted RST admonitions (> **Note:**).
+    if re.match(r'> \*\*(REQUIRED|DEPRECATED|RECOMMENDED|TIP) \(v', content):
         lines_list = content.split('\n')
         idx = 0
         while idx < len(lines_list) and (lines_list[idx].startswith('> ') or lines_list[idx] == '>'):

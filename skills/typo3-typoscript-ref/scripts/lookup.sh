@@ -471,6 +471,7 @@ mode_deprecations() {
     fi
 
     if [[ -n "$VERSION" ]]; then
+        validate_version "$VERSION"
         # Filter to the version's section
         # Sections are expected as ## v12, ## v13, etc.
         local section_found=false
