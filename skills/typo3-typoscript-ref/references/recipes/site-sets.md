@@ -224,7 +224,7 @@ lib.dynamicContent {
 config {
     no_cache = 0
     sendCacheHeaders = 1
-    contentObjectExceptionHandler = 0
+    # contentObjectExceptionHandler = 0  # DEV ONLY — shows exceptions. Remove in production!
 }
 ```
 

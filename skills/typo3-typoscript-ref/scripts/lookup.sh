@@ -56,10 +56,18 @@ EOF
 
 # --- Argument parsing ---
 
+require_arg() {
+    if [[ -z "${2:-}" ]] || [[ "${2:-}" == --* ]]; then
+        echo "Error: $1 requires a value" >&2
+        exit 1
+    fi
+}
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --version)
-            VERSION="$2"
+            require_arg "$1" "${2:-}"
+            VERSION="${2}"
             shift 2
             ;;
         --with-fluid)
@@ -71,8 +79,9 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --recipe)
+            require_arg "$1" "${2:-}"
             MODE="recipe"
-            RECIPE_NAME="$2"
+            RECIPE_NAME="${2}"
             shift 2
             ;;
         --deprecations)
@@ -80,8 +89,9 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --checklist)
+            require_arg "$1" "${2:-}"
             MODE="checklist"
-            CHECKLIST_TYPE="$2"
+            CHECKLIST_TYPE="${2}"
             shift 2
             ;;
         --lint-rules)
@@ -89,8 +99,9 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --debug)
+            require_arg "$1" "${2:-}"
             MODE="debug"
-            DEBUG_MSG="$2"
+            DEBUG_MSG="${2}"
             shift 2
             ;;
         --update)
@@ -372,6 +383,12 @@ mode_keyword() {
 # --- Mode: Recipe ---
 
 mode_recipe() {
+    if [[ ! "$RECIPE_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+        echo "Error: invalid recipe name: ${RECIPE_NAME}" >&2
+        echo "Recipe names may only contain letters, digits, hyphens, and underscores." >&2
+        exit 1
+    fi
+
     local recipe_dir="${REFS_DIR}/recipes"
     local recipe_file="${recipe_dir}/${RECIPE_NAME}.md"
 
@@ -600,7 +617,7 @@ mode_debug() {
                 # End of previous matching section
                 echo ""
             fi
-            if echo "$line" | grep -qi "$DEBUG_MSG"; then
+            if echo "$line" | grep -qiF "$DEBUG_MSG"; then
                 in_section=true
                 found=true
                 echo "$line"
@@ -615,7 +632,7 @@ mode_debug() {
     # Also try grep-based search in case the error text is in the body
     if [[ "$found" == false ]]; then
         local grep_match
-        grep_match=$(grep -in "$DEBUG_MSG" "$debug_file" 2>/dev/null || true)
+        grep_match=$(grep -inF "$DEBUG_MSG" "$debug_file" 2>/dev/null || true)
         if [[ -n "$grep_match" ]]; then
             echo "Matching lines in debugging.md:"
             echo "$grep_match"
