@@ -118,7 +118,7 @@ page.10 {
 - `PAGEVIEW` is the **recommended** page rendering approach (replaces `FLUIDTEMPLATE` for new projects)
 - Introduce Site Sets (`Configuration/Sets/*/config.yaml`)
 - Use `settings.definitions.yaml` for typed settings
-- `PAGEVIEW` auto-resolves templates by controller/action convention
+- `PAGEVIEW` auto-resolves templates by backend layout name convention
 
 ```typoscript
 page = PAGE

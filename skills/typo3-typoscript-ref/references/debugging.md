@@ -116,7 +116,7 @@ page.10.value = DEBUG: check if this renders
 
 ### "Why is my page cached incorrectly?"
 
-1. **Use COA_INT for dynamic content** — `COA_INT` (and `USER_INT`) bypasses the page cache for that object.
+1. **Use COA_INT for dynamic content** — `COA_INT` (and `USER_INT`) is rendered on every request while the rest of the page stays cached (placeholder-based).
 
 ```typoscript
 # This content is excluded from page cache

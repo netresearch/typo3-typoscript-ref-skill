@@ -371,11 +371,24 @@ mode_keyword() {
 
         if [[ -d "$fluid_cache" ]]; then
             echo "--- Fluid docs (${fluid_version}) ---" >&2
+            local seen_fluid=()
             for search_term in "${KEYWORDS[@]}"; do
                 local fluid_results
                 fluid_results=$(grep -rilF "$search_term" "$fluid_cache" 2>/dev/null || true)
                 if [[ -n "$fluid_results" ]]; then
                     while IFS= read -r match_file; do
+                        # Deduplicate across keywords
+                        local already_seen=false
+                        for seen in "${seen_fluid[@]+"${seen_fluid[@]}"}"; do
+                            if [[ "$seen" == "$match_file" ]]; then
+                                already_seen=true
+                                break
+                            fi
+                        done
+                        if [[ "$already_seen" == true ]]; then
+                            continue
+                        fi
+                        seen_fluid+=("$match_file")
                         local rel
                         rel="${match_file#"${fluid_cache}/"}"
                         echo "--- fluid/${rel} ---"

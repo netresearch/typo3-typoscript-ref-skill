@@ -316,6 +316,19 @@ with open(annotations_file) as f:
     all_annotations = json.load(f)
 
 annotations = all_annotations.get(version, {})
+
+# Fallback: if version is a docs branch name (e.g., "main"), try mapping
+# to the TYPO3 major version by checking which major maps to this branch.
+if not annotations:
+    version_map_path = os.path.join(os.path.dirname(annotations_file), 'version-map.json')
+    if os.path.isfile(version_map_path):
+        vmap = json.load(open(version_map_path))
+        for major, sources in vmap.get('typo3_to_docs', {}).items():
+            if sources.get('typoscript') == version:
+                annotations = all_annotations.get(major, {})
+                if annotations:
+                    break
+
 if not annotations:
     print(f'No annotations found for version {version}')
     sys.exit(0)
@@ -359,14 +372,12 @@ for ann_key, ann in annotations.items():
     with open(md_file, 'r') as f:
         content = f.read()
 
-    # Strip existing annotation (idempotency)
-    while content.startswith('> **'):
-        # Remove lines starting with '> ' until first non-blockquote line
+    # Strip existing annotation (idempotency — only one annotation expected)
+    if content.startswith('> **'):
         lines_list = content.split('\n')
         idx = 0
         while idx < len(lines_list) and (lines_list[idx].startswith('> ') or lines_list[idx] == '>'):
             idx += 1
-        # Skip trailing blank lines after the blockquote
         while idx < len(lines_list) and lines_list[idx].strip() == '':
             idx += 1
         content = '\n'.join(lines_list[idx:])
