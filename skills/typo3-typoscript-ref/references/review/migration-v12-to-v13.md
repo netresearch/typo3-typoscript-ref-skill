@@ -139,7 +139,7 @@ plugin.tx_myext.settings.itemsPerPage = {$itemsPerPage}
 Site `config.yaml` (for the site itself):
 ```yaml
 base: 'https://example.com/'
-sets:
+dependencies:
   - my-vendor/my-sitepackage
 ```
 
