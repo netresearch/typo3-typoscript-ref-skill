@@ -37,28 +37,35 @@ The skill enforces correctness through **rules**: agents must look up references
 ## Installation
 
 ### Claude Code Marketplace
+
 ```bash
 /plugin marketplace add netresearch/claude-code-marketplace
 ```
+
 Then install the skill via `/plugin`.
 
 ### Composer
+
 ```bash
 composer require netresearch/typo3-typoscript-ref-skill
 ```
 
 ### Manual
+
 Download the latest release and extract to `~/.claude/skills/typo3-typoscript-ref/`
 
 ## Usage
 
 ### First Run
+
 Populate the local cache for your TYPO3 version:
+
 ```bash
 scripts/lookup.sh --update
 ```
 
 ### Reference Lookup
+
 ```bash
 scripts/lookup.sh "stdWrap wrap"
 scripts/lookup.sh "PAGEVIEW" --with-fluid
