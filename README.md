@@ -72,12 +72,14 @@ scripts/lookup.sh "PAGEVIEW" --with-fluid
 ```
 
 ### Recipes
+
 ```bash
 scripts/lookup.sh --recipe page-setup
 scripts/lookup.sh --recipe menu-setup
 ```
 
 ### Code Review
+
 ```bash
 scripts/lookup.sh "FLUIDTEMPLATE" --review
 scripts/lookup.sh --deprecations
@@ -85,6 +87,7 @@ scripts/lookup.sh --checklist typoscript
 ```
 
 ### Debugging
+
 ```bash
 scripts/lookup.sh --debug "The page is not configured"
 ```
