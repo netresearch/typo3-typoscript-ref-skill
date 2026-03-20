@@ -2,7 +2,7 @@
   "name": "netresearch/typo3-typoscript-ref-skill",
   "description": "TYPO3 TypoScript, TSconfig and Fluid reference lookup for AI agents",
   "type": "ai-agent-skill",
-  "license": "MIT",
+  "license": "(MIT AND CC-BY-SA-4.0)",
   "authors": [
     {
       "name": "Netresearch DTT GmbH",
