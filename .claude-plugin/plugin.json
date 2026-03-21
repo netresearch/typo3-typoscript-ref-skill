@@ -8,6 +8,14 @@
     "name": "Netresearch DTT GmbH",
     "url": "https://www.netresearch.de/"
   },
-  "keywords": ["typo3", "typoscript", "tsconfig", "fluid", "reference"],
-  "skills": ["./skills/typo3-typoscript-ref"]
+  "keywords": [
+    "typo3",
+    "typoscript",
+    "tsconfig",
+    "fluid",
+    "reference"
+  ],
+  "skills": [
+    "./skills/typo3-typoscript-ref"
+  ]
 }
