@@ -255,7 +255,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['allowedFunctions']['typoscript'][] =
     \Vendor\MyExt\TypoScript\Hook::class . '->greet';
 ```
 
-**Audit:** grep all `*.typoscript` / `TSconfig.typoscript` for `userFunc`, `preUserFunc`, `postUserFunc`; confirm each referenced callable is allow-listed. Prefer migrating to `DataProcessor` classes or PSR-14 event listeners.
+**Audit:** grep `*.typoscript` and `*.tsconfig` files for `userFunc`, `preUserFunc`, `postUserFunc`; confirm each referenced callable is allow-listed. Prefer migrating to `DataProcessor` classes or PSR-14 event listeners.
 
 ---
 
@@ -264,9 +264,9 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['allowedFunctions']['typoscript'][] =
 | Removed | Replacement | Ticket |
 |---|---|---|
 | `config.tx_extbase.persistence.updateReferenceIndex` toggle | always on; remove the line | [#106041](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Breaking-106041-TypoScriptExtbaseToggleConfigtx_extbasepersistenceupdateReferenceIndexRemoved.html) |
-| TSconfig `options.pageTree.backgroundColor` | CSS custom properties in backend override | #105377 umbrella |
-| `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultPageTSconfig']` | per-site TSconfig via Site Sets | #105377 |
-| `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultUserTSconfig']` | `be_groups.TSconfig` | #105377 |
+| TSconfig `options.pageTree.backgroundColor` | CSS custom properties in backend override | [#105377](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Breaking-105377-DeprecatedFunctionalityRemoved.html) umbrella |
+| `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultPageTSconfig']` | per-site TSconfig via Site Sets | [#105377](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Breaking-105377-DeprecatedFunctionalityRemoved.html) |
+| `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultUserTSconfig']` | global-default: Site Sets `user.tsconfig`; group-scoped: `be_groups.TSconfig` (pick whichever matches the original `defaultUserTSconfig` intent) | [#105377](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Breaking-105377-DeprecatedFunctionalityRemoved.html) |
 | User TSconfig `auth.BE.redirectToURL` | deprecated, removal v15 | [#106969](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Deprecation-106969-DeprecateUserTSConfigAuthBEredirectToURL.html) |
 | User TSconfig `doktypesToShowInNewPageDragArea` | deprecated v14.2 | [#109196](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.2/Deprecation-109196-DoktypesToShowInNewPageDragAreaUserTSconfig.html) |
 
