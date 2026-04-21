@@ -234,3 +234,49 @@ removed from core. This was the legacy "Plugin" content element type.
 - Remove any TypoScript that references `tt_content.list` if it relied on the core defaults.
 - Check if your `tt_content.list.20.listType` configurations still apply; they may need
   migrating to the new content element registration approach.
+
+---
+
+## 8. TypoScript / TSconfig callables require explicit opt-in
+
+**What changed (Breaking [#108054](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Breaking-108054-EnforceExplicitOpt-inForTypoScriptTSconfigCallables.html)):**
+`userFunc` / `postUserFunc` / `preUserFunc` / `stdWrap.preUserFunc` and related TSconfig callables now require explicit allow-listing for security. Unlisted callables are silently ignored in v14.
+
+**Before (v13):** Any public callable worked:
+```typoscript
+lib.greeting = TEXT
+lib.greeting.stdWrap.preUserFunc = Vendor\MyExt\TypoScript\Hook->greet
+```
+
+**After (v14):** Register explicitly in `ext_localconf.php`:
+```php
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['allowedFunctions']['typoscript'] ??= [];
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['allowedFunctions']['typoscript'][] =
+    \Vendor\MyExt\TypoScript\Hook::class . '->greet';
+```
+
+**Audit:** grep all `*.typoscript` / `TSconfig.typoscript` for `userFunc`, `preUserFunc`, `postUserFunc`; confirm each referenced callable is allow-listed. Prefer migrating to `DataProcessor` classes or PSR-14 event listeners.
+
+---
+
+## 9. Removed / deprecated TypoScript & TSconfig options
+
+| Removed | Replacement | Ticket |
+|---|---|---|
+| `config.tx_extbase.persistence.updateReferenceIndex` toggle | always on; remove the line | [#106041](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Breaking-106041-TypoScriptExtbaseToggleConfigtx_extbasepersistenceupdateReferenceIndexRemoved.html) |
+| TSconfig `options.pageTree.backgroundColor` | CSS custom properties in backend override | #105377 umbrella |
+| `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultPageTSconfig']` | per-site TSconfig via Site Sets | #105377 |
+| `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultUserTSconfig']` | `be_groups.TSconfig` | #105377 |
+| User TSconfig `auth.BE.redirectToURL` | deprecated, removal v15 | [#106969](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Deprecation-106969-DeprecateUserTSConfigAuthBEredirectToURL.html) |
+| User TSconfig `doktypesToShowInNewPageDragArea` | deprecated v14.2 | [#109196](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.2/Deprecation-109196-DoktypesToShowInNewPageDragAreaUserTSconfig.html) |
+
+---
+
+## 10. New TypoScript / expression-language features
+
+| Feature | Ticket | Notes |
+|---|---|---|
+| Expression `site.locale` | [#107105](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Feature-107105-SiteLocaleExpressionLanguageProvider.html) | `[site.locale == "de_DE"]` |
+| Routing `limitToPages` with expression language | [#109263](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.2/Feature-109263-ExpressionLanguageForLimitToPagesInRouting.html) | dynamic page-UID filters |
+| `config.htmlTag.attributes.*` supports `stdWrap` | [#106415](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.0/Feature-106415-PossibilityToUseStdWrapInConfightmlTagattributesattr.html) | dynamic `<html>` attributes |
+| Page links: array-based `queryParameters` | [#109370](https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/14.2/Feature-109370-SupportArrayInParameterAndQueryParametersInPageLinks.html) | cleaner typolink construction |

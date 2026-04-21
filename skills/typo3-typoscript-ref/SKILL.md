@@ -1,6 +1,6 @@
 ---
 name: typo3-typoscript-ref
-description: "Use when writing, editing, reviewing or debugging TypoScript, TSconfig or Fluid templates in TYPO3 projects. Also use for code reviews of .typoscript, .tsconfig and Fluid .html files, and when suggesting improvements or checking for deprecated patterns"
+description: "Use when writing, editing, reviewing or debugging TypoScript, TSconfig or Fluid templates in TYPO3 projects (v14.3 LTS is the current target). Also use for code reviews of .typoscript, .tsconfig and Fluid .html files, v13->v14 migration (INCLUDE_TYPOSCRIPT->@import, userFunc opt-in #108054, getTSFE() condition removed, updateReferenceIndex toggle removed, site.locale expression), Fluid 4->5 breaking changes, and when suggesting improvements or checking for deprecated patterns."
 ---
 
 # TYPO3 TypoScript, TSconfig and Fluid Reference
