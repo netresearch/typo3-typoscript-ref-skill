@@ -64,6 +64,7 @@ When reviewing TypoScript/TSconfig/Fluid code:
 | Common mistakes | `references/review/common-mistakes.md` |
 | Migration v12-v13 | `references/review/migration-v12-to-v13.md` |
 | Migration v13-v14 | `references/review/migration-v13-to-v14.md` |
+| Topic index (lookup.sh) | `references/topic-index.md` |
 
 ## First Run
 
