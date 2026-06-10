@@ -147,7 +147,7 @@ while IFS= read -r filepath; do
     # Exclude meta files
     basename_file=$(basename "$filepath")
     case "$basename_file" in
-        Sitemap.rst|genindex.rst|search.rst|Targets.rst) continue ;;
+        Sitemap.rst|genindex.rst|search.rst|Targets.rst|404.rst) continue ;;
     esac
 
     RST_FILES+=("$filepath")
@@ -250,7 +250,7 @@ for ((idx=0; idx < TOTAL; idx++)); do
     echo "[${COUNT}/${TOTAL}] Converting ${filepath}"
 
     download_and_convert "$filepath" "$cache_path" &
-    PIDS[${idx}]=$!
+    PIDS[idx]=$!
 
     # Every BATCH_SIZE files, wait for the batch to complete
     if (( (idx + 1) % BATCH_SIZE == 0 )) || (( idx + 1 == TOTAL )); then
@@ -317,7 +317,7 @@ with open(annotations_file) as f:
 
 annotations = all_annotations.get(version, {})
 
-# Fallback: if version is a docs branch name (e.g., "main"), try mapping
+# Fallback: if version is a docs branch name (e.g. main), try mapping
 # to the TYPO3 major version by checking which major maps to this branch.
 if not annotations:
     version_map_path = os.path.join(os.path.dirname(annotations_file), 'version-map.json')

@@ -1,6 +1,7 @@
 # TYPO3 TypoScript Reference Skill
 
-Version-aware TypoScript, TSconfig and Fluid reference lookup for Claude Code with always-on best practices.
+Version-aware TypoScript, TSconfig and Fluid reference lookup for Claude Code
+with always-on best practices.
 
 ## Features
 
@@ -14,25 +15,34 @@ Version-aware TypoScript, TSconfig and Fluid reference lookup for Claude Code wi
 
 ## Why This Skill?
 
-AI coding agents frequently hallucinate TypoScript properties, invent non-existent ViewHelpers, or suggest patterns that were deprecated several TYPO3 versions ago. Generic documentation tools like Context7 provide raw library docs but lack the TYPO3-specific curation needed to produce correct, modern TypoScript.
+AI coding agents frequently hallucinate TypoScript properties, invent
+non-existent ViewHelpers, or suggest patterns that were deprecated several
+TYPO3 versions ago. Generic documentation tools like Context7 provide raw
+library docs but lack the TYPO3-specific curation needed to produce correct,
+modern TypoScript.
 
-This skill solves that by providing **structured, version-aware reference data** tailored for AI agents:
+This skill solves that by providing **structured, version-aware reference
+data** tailored for AI agents:
 
-| Capability | This Skill | Context7 / Generic Docs |
-|-----------|-----------|------------------------|
-| Version detection | Auto-detects from `composer.json` | Manual version specification |
+| Capability | This Skill | Generic Docs |
+| ---------- | ---------- | ------------ |
+| Version detection | Auto from `composer.json` | Manual |
 | Offline usage | Local cache after first fetch | API call per request |
-| Best practice annotations | Injected into docs (deprecated/required/recommended) | Not available |
-| Migration guides | Before/after code with step-by-step instructions (v12-v13, v13-v14) | Not available |
-| Ready-to-use recipes | 14 curated patterns (page setup, menus, data processors, ...) | Raw documentation only |
-| Code review mode | Deprecation checks, checklists, lint rule detection | Not available |
+| Annotations | deprecated/required/recommended | Not available |
+| Migration guides | Before/after code, v12-v13, v13-v14 | Not available |
+| Recipes | 14 curated patterns | Raw docs only |
+| Code review mode | Deprecations, checklists, lint rules | Not available |
 | Debugging support | Maps error messages to solutions | Not available |
-| TypoScript lint integration | Reads project `typoscript-lint.yml` config | Not available |
+| Lint integration | Reads `typoscript-lint.yml` config | Not available |
 | Scope | TypoScript, TSconfig, Fluid, ViewHelpers | General-purpose |
 
 ### Designed for Agent Workflows
 
-The skill enforces correctness through **rules**: agents must look up references before writing TypoScript, follow annotation levels, and check project lint rules. This prevents the most common AI mistakes — using removed properties, mixing v12 and v13 syntax, or ignoring site-specific coding standards.
+The skill enforces correctness through **rules**: agents must look up
+references before writing TypoScript, follow annotation levels, and check
+project lint rules. This prevents the most common AI mistakes — using removed
+properties, mixing v12 and v13 syntax, or ignoring site-specific coding
+standards.
 
 ## Installation
 
@@ -95,10 +105,10 @@ scripts/lookup.sh --debug "The page is not configured"
 ## Supported TYPO3 Versions
 
 | TYPO3 | TypoScript Ref | Fluid | ViewHelpers |
-|-------|---------------|-------|-------------|
+| ----- | -------------- | ----- | ----------- |
 | 12.4 | 12.4 | 2.12 | 12.4 |
-| 13.4 | 13.4 | 4.3 | 13.4 |
-| 14.x | main | 5.0 | main |
+| 13.4 | 13.4 | 4.6 | 13.4 |
+| 14.3 | 14.3 | 5.3 | 14.3 |
 
 ## Documentation Sources
 
@@ -119,4 +129,5 @@ MIT — Netresearch DTT GmbH
 
 ## Credits
 
-Developed by [Netresearch DTT GmbH](https://www.netresearch.de/) for the Claude Code ecosystem.
+Developed by [Netresearch DTT GmbH](https://www.netresearch.de/) for the
+Claude Code ecosystem.
