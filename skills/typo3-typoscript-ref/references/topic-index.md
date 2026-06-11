@@ -4,6 +4,7 @@ Maps keywords to cached documentation files. Used by lookup.sh for search.
 Paths match the actual cache directory structure (lowercased RST source paths).
 
 ## Content Objects
+
 | Keyword | File |
 |---------|------|
 | TEXT, text, cObject TEXT | contentobjects/text.md |
@@ -23,6 +24,7 @@ Paths match the actual cache directory structure (lowercased RST source paths).
 | EXTBASEPLUGIN, extbaseplugin | contentobjects/extbaseplugin.md |
 
 ## Functions
+
 | Keyword | File |
 |---------|------|
 | stdWrap, stdwrap | functions/stdwrap.md |
@@ -50,6 +52,7 @@ Paths match the actual cache directory structure (lowercased RST source paths).
 | numRows | functions/numrows.md |
 
 ## Data Processors
+
 | Keyword | File |
 |---------|------|
 | CommaSeparatedValueProcessor, csv | dataprocessing/commaseparatedvalueprocessor.md |
@@ -67,6 +70,7 @@ Paths match the actual cache directory structure (lowercased RST source paths).
 | PageContentFetchingProcessor | dataprocessing/pagecontentfetchingprocessor.md |
 
 ## Page and Top-Level Objects
+
 | Keyword | File |
 |---------|------|
 | PAGE, page, pageType | toplevelobjects/page.md |
@@ -77,6 +81,7 @@ Paths match the actual cache directory structure (lowercased RST source paths).
 | module, module.tx_ | toplevelobjects/module.md |
 
 ## Backend TSconfig
+
 | Keyword | File |
 |---------|------|
 | TCEFORM, tceform, form | pagetsconfig/tceform.md |
@@ -89,6 +94,7 @@ Paths match the actual cache directory structure (lowercased RST source paths).
 | permissions | usertsconfig/permissions.md |
 
 ## Syntax and Concepts
+
 | Keyword | File |
 |---------|------|
 | syntax, operators, copy, reference | syntax.md |
