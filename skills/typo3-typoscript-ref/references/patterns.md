@@ -30,6 +30,7 @@ settings:
 ### File Structure
 
 **v12 (sys_template-based):**
+
 ```
 Configuration/
   TypoScript/
@@ -42,6 +43,7 @@ Configuration/
 ```
 
 **v13+ (Site Sets):**
+
 ```
 Configuration/
   Sets/
@@ -55,11 +57,13 @@ Configuration/
 ### When to Split vs Single File
 
 Split into multiple files when:
+
 - A logical section exceeds ~100 lines
 - Content types, page config, and navigation each warrant their own file
 - Multiple developers work on the same extension
 
 Keep as single file when:
+
 - Simple site package with minimal TypoScript
 - Extension plugin configuration only
 
@@ -139,9 +143,17 @@ dependencies:
 ### v14
 
 - Site Sets are **mandatory** for extensions providing TypoScript
-- `FLUIDTEMPLATE` is **deprecated** — use `PAGEVIEW`
+- `PAGEVIEW` is the standard for page rendering — `FLUIDTEMPLATE` is legacy for page templates (not officially deprecated, still valid for non-page rendering such as emails)
 - `sys_template`-based static includes from extensions no longer supported
 - All extension TypoScript must be distributed via Site Sets
+- `@import` is mandatory — `<INCLUDE_TYPOSCRIPT:>` was removed
+- `getTSFE()` in conditions was removed (#107473) — use `page`, `request`, `site`; new: `site.locale` expression (#107105)
+- Prefer the `PKG:` resource format over `EXT:` (`PKG:my-vendor/package-name:Resources/Public/...`); `EXT:` still works
+
+```typoscript
+# v14: PKG: resource format (preferred over EXT:)
+page.10.settings.logo = PKG:my-vendor/site-package:Resources/Public/Icons/logo.svg
+```
 
 ---
 

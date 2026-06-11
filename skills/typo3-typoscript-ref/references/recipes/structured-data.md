@@ -3,6 +3,7 @@
 > Version: v12+
 
 ## What this builds
+
 JSON-LD Schema.org markup generated via TypoScript headerData for Organization, WebSite, BreadcrumbList, and WebPage types to enhance search engine visibility.
 
 ## TypoScript — Organization Schema
@@ -136,7 +137,8 @@ page.headerData {
                 10 = TEXT
                 10 {
                     typolink {
-                        parameter.data = TSFE:id
+                        # page:uid — the TSFE getData key is not available in v14
+                        parameter.data = page:uid
                         returnLast = url
                         forceAbsoluteUrl = 1
                     }
@@ -173,6 +175,7 @@ page.headerData {
 For more complex structured data, generating JSON-LD in Fluid templates gives better control.
 
 File: `EXT:site_package/Resources/Private/Partials/Meta/StructuredData.html`
+
 ```html
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
@@ -296,10 +299,11 @@ page.10 {
 ```
 
 ## Notes
+
 - JSON-LD is Google's preferred format for structured data. It goes in the `<head>` or `<body>` of the page.
 - Use `headerData` with numeric keys to organize different schema types. Keep keys spaced (200, 210, 220) for easy insertion.
 - Always use absolute URLs in structured data (`forceAbsoluteUrl = 1`).
-- Test structured data with Google's Rich Results Test (https://search.google.com/test/rich-results) and Schema.org Validator.
+- Test structured data with Google's Rich Results Test (<https://search.google.com/test/rich-results>) and Schema.org Validator.
 - `htmlSpecialChars = 1` is essential for any dynamic data inserted into JSON to prevent XSS and JSON syntax errors.
 - For complex dynamic structured data, the Fluid-based approach is cleaner and more maintainable than pure TypoScript.
 - The Organization schema should only appear on the homepage (`if.value = 1` / `if.equals.data = page:uid`).

@@ -110,8 +110,8 @@
   },
   "14": {
     "content-objects/fluidtemplate": {
-      "level": "deprecated",
-      "message": "FLUIDTEMPLATE is expected to be removed in a future TYPO3 version. Migrate to PAGEVIEW now.",
+      "level": "recommended",
+      "message": "Use PAGEVIEW instead of FLUIDTEMPLATE for page rendering in v14. FLUIDTEMPLATE is legacy for page templates (not officially deprecated) and remains valid for non-page rendering such as emails.",
       "recipe": "page-setup",
       "migration": "migration-v13-to-v14.md#fluidtemplate"
     },
@@ -146,7 +146,7 @@
     },
     "frontend/conditions": {
       "level": "tip",
-      "message": "Use Symfony Expression Language for all conditions. Legacy bracket syntax was removed in v12 and is not available in v14."
+      "message": "Use Symfony Expression Language for all conditions. getTSFE() was removed in v14 (#107473) — use page, request, site instead. New in v14: the site.locale expression (#107105)."
     },
     "functions/stdwrap": {
       "level": "tip",
