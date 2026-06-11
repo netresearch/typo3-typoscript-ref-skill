@@ -68,7 +68,7 @@ page {
         variables {
             copyrightYear = TEXT
             copyrightYear.data = date:U
-            copyrightYear.strftime = %Y
+            copyrightYear.date = Y
         }
     }
 }
@@ -170,7 +170,7 @@ page {
 
             copyrightYear = TEXT
             copyrightYear.data = date:U
-            copyrightYear.strftime = %Y
+            copyrightYear.date = Y
         }
     }
 }
