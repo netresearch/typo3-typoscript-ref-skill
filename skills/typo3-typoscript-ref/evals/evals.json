@@ -162,5 +162,21 @@
       { "type": "content", "pattern": "(Site Sets|PAGEVIEW|config\\.baseURL)" },
       { "type": "content", "pattern": "(migration|upgrade|replace)" }
     ]
+  },
+  {
+    "name": "migration_v13_to_v14_conditions",
+    "prompt": "My TypoScript condition [getTSFE() && getTSFE().id == 42] stopped working after upgrading to TYPO3 v14. Why?",
+    "assertions": [
+      { "type": "content", "pattern": "(removed in v14|getTSFE\\(\\) was removed|107473)" },
+      { "type": "content", "pattern": "(page\\[\"uid\"\\]|page\\['uid'\\]|getPageArguments|request)" }
+    ]
+  },
+  {
+    "name": "review_flags_tsfe_getdata_v14",
+    "prompt": "Review this TYPO3 v14 TypoScript snippet: lib.link = TEXT\nlib.link.typolink.parameter.data = TSFE:id",
+    "assertions": [
+      { "type": "content", "pattern": "(TSFE.*(removed|not available|v14)|v14.*TSFE)" },
+      { "type": "content", "pattern": "page\\s*:\\s*uid|page:uid" }
+    ]
   }
 ]

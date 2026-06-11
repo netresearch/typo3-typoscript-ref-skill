@@ -37,7 +37,7 @@ scripts/lookup.sh "TEXT" --version 12         # Override version
 
 - **v12**: Use FLUIDTEMPLATE, sys_template static includes, constants.typoscript
 - **v13**: Prefer PAGEVIEW for new page templates, introduce Site Sets, use settings.definitions.yaml
-- **v14**: Site Sets mandatory, FLUIDTEMPLATE deprecated, @import replaces INCLUDE_TYPOSCRIPT
+- **v14**: Site Sets mandatory, PAGEVIEW is the standard for page rendering (FLUIDTEMPLATE is legacy, not officially deprecated), @import mandatory (INCLUDE_TYPOSCRIPT removed), getTSFE() conditions removed, prefer PKG: over EXT: resource paths
 
 When answering version-specific questions, always consult `references/review/deprecations.md` and the relevant migration guide (`migration-v12-to-v13.md` or `migration-v13-to-v14.md`).
 

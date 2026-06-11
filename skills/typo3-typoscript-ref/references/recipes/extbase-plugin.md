@@ -3,6 +3,7 @@
 > Version: v12+
 
 ## What this builds
+
 Complete TypoScript configuration for an Extbase plugin including plugin settings, persistence mapping, view paths, and frontend rendering setup for a "Job Board" extension.
 
 ## TypoScript — Plugin Configuration
@@ -103,6 +104,7 @@ plugin.tx_jobboard {
 ## TypoScript — Persistence Mapping (v12+)
 
 File: `EXT:job_board/Configuration/Extbase/Persistence/Classes.php`
+
 ```php
 <?php
 
@@ -143,6 +145,7 @@ return [
 ## Plugin Registration
 
 File: `EXT:job_board/Configuration/TCA/Overrides/tt_content.php`
+
 ```php
 <?php
 
@@ -219,6 +222,7 @@ ExtensionUtility::configurePlugin(
 ## FlexForm for Plugin Settings
 
 File: `EXT:job_board/Configuration/FlexForms/List.xml`
+
 ```xml
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <T3DataStructure>
@@ -313,6 +317,7 @@ tt_content.list.20.jobboard_detail =< plugin.tx_jobboard_detail
 ## Fluid Template Example
 
 File: `EXT:job_board/Resources/Private/Templates/JobOffer/List.html`
+
 ```html
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
@@ -321,10 +326,10 @@ File: `EXT:job_board/Resources/Private/Templates/JobOffer/List.html`
 
 <f:section name="Main">
     <div class="job-list">
-        <f:if condition="{jobOffers -> f:count()}">
+        <f:if condition="{paginator.paginatedItems -> f:count()}">
             <f:then>
                 <div class="job-list__items">
-                    <f:for each="{jobOffers}" as="job">
+                    <f:for each="{paginator.paginatedItems}" as="job">
                         <article class="job-card" itemscope itemtype="https://schema.org/JobPosting">
                             <h2 class="job-card__title" itemprop="title">
                                 <f:link.action action="show" controller="JobOffer"
@@ -364,11 +369,19 @@ File: `EXT:job_board/Resources/Private/Templates/JobOffer/List.html`
                     </f:for>
                 </div>
 
-                <f:widget.paginate objects="{jobOffers}" as="paginatedJobs" configuration="{itemsPerPage: settings.list.itemsPerPage}">
-                    <f:for each="{paginatedJobs}" as="job">
-                        <f:render partial="JobOffer/Card" arguments="{job: job, settings: settings}" />
-                    </f:for>
-                </f:widget.paginate>
+                <f:comment>
+                    Pagination: build in the controller (f:widget.paginate was removed in v12):
+                    $paginator = new QueryResultPaginator($jobOffers, $currentPageNumber, $itemsPerPage);
+                    $pagination = new SimplePagination($paginator);
+                    $this->view->assignMultiple(['paginator' => $paginator, 'pagination' => $pagination]);
+                </f:comment>
+                <f:if condition="{pagination.allPageNumbers -> f:count()} > 1">
+                    <nav class="pagination" aria-label="Pagination">
+                        <f:for each="{pagination.allPageNumbers}" as="pageNumber">
+                            <f:link.action action="list" arguments="{currentPageNumber: pageNumber}">{pageNumber}</f:link.action>
+                        </f:for>
+                    </nav>
+                </f:if>
             </f:then>
             <f:else>
                 <p class="job-list__empty">
@@ -384,6 +397,7 @@ File: `EXT:job_board/Resources/Private/Templates/JobOffer/List.html`
 ## v13+ — Site Sets Integration
 
 File: `EXT:job_board/Configuration/Sets/JobBoard/config.yaml`
+
 ```yaml
 name: vendor/job-board
 label: Job Board Extension
@@ -392,6 +406,7 @@ dependencies:
 ```
 
 File: `EXT:job_board/Configuration/Sets/JobBoard/settings.definitions.yaml`
+
 ```yaml
 settings:
   job_board.persistence.storagePid:
@@ -411,6 +426,7 @@ settings:
 ```
 
 File: `EXT:job_board/Configuration/Sets/JobBoard/setup.typoscript`
+
 ```typoscript
 plugin.tx_jobboard {
     persistence.storagePid = {$job_board.persistence.storagePid}
@@ -420,6 +436,7 @@ plugin.tx_jobboard {
 ```
 
 ## Notes
+
 - Plugin TypoScript uses `plugin.tx_extensionname` (lowercase, no underscores from vendor). The specific plugin is `plugin.tx_extensionname_pluginname`.
 - FlexForm settings from the plugin content element override TypoScript `settings.*` values. This allows editors to customize per-instance.
 - `features.skipDefaultArguments = 1` prevents default action/controller parameters from appearing in URLs.
@@ -427,5 +444,5 @@ plugin.tx_jobboard {
 - In v12+, persistence mapping is done via `Configuration/Extbase/Persistence/Classes.php`, not via TypoScript `config.tx_extbase.persistence.classes`.
 - Non-cacheable actions (form submissions, filtered lists) are defined in the second array of `configurePlugin()`. Keep these to a minimum for performance.
 - Template path arrays use numeric keys. Key `0` is the extension default, `10` is for constants/settings override, `20` for site package overrides.
-- The `f:widget.paginate` ViewHelper was removed in v12+. Use the `PaginateViewHelper` from EXT:fluid or implement pagination in the controller with `PaginatorInterface`.
+- The `f:widget.paginate` ViewHelper was removed in v12. Build pagination in the controller with `QueryResultPaginator` and `SimplePagination` (TYPO3 Pagination API) and render the page links in Fluid.
 - In v13+ with Site Sets, constants are replaced by `settings.yaml` definitions. Reference them with `{$setting.name}` in TypoScript (same syntax as constants).

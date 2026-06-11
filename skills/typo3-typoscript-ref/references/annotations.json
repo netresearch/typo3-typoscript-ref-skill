@@ -7,8 +7,7 @@
     },
     "frontend/conditions": {
       "level": "required",
-      "message": "Legacy conditions ([globalVar = TS:xx], [browser], [system], [device]) were removed in v12. Use Symfony Expression Language exclusively.",
-      "migration": "migration-v12-to-v13.md#conditions"
+      "message": "Legacy conditions ([globalVar = TS:xx], [browser], [system], [device]) were removed in v12. Use Symfony Expression Language exclusively."
     },
     "about/usage": {
       "level": "recommended",
@@ -44,7 +43,7 @@
       "level": "recommended",
       "message": "PAGEVIEW is the recommended page rendering approach in v13+. FLUIDTEMPLATE continues to work but PAGEVIEW requires less configuration.",
       "recipe": "page-setup",
-      "migration": "migration-v12-to-v13.md#fluidtemplate"
+      "migration": "migration-v12-to-v13.md#1-pageview-as-preferred-page-template-object"
     },
     "content-objects/pageview": {
       "level": "recommended",
@@ -110,10 +109,10 @@
   },
   "14": {
     "content-objects/fluidtemplate": {
-      "level": "deprecated",
-      "message": "FLUIDTEMPLATE is expected to be removed in a future TYPO3 version. Migrate to PAGEVIEW now.",
+      "level": "recommended",
+      "message": "Use PAGEVIEW instead of FLUIDTEMPLATE for page rendering in v14. FLUIDTEMPLATE is legacy for page templates (not officially deprecated) and remains valid for non-page rendering such as emails.",
       "recipe": "page-setup",
-      "migration": "migration-v13-to-v14.md#fluidtemplate"
+      "migration": "migration-v12-to-v13.md#1-pageview-as-preferred-page-template-object"
     },
     "content-objects/pageview": {
       "level": "recommended",
@@ -124,7 +123,7 @@
       "level": "required",
       "message": "Site Sets are the required way to provide TypoScript in v14. sys_template-based static includes from extensions are no longer supported.",
       "recipe": "site-sets",
-      "migration": "migration-v13-to-v14.md#site-sets"
+      "migration": "migration-v12-to-v13.md#2-site-sets-replacing-sys_template-includes-and-typoscript-constants"
     },
     "frontend/config": {
       "level": "required",
@@ -146,7 +145,7 @@
     },
     "frontend/conditions": {
       "level": "tip",
-      "message": "Use Symfony Expression Language for all conditions. Legacy bracket syntax was removed in v12 and is not available in v14."
+      "message": "Use Symfony Expression Language for all conditions. getTSFE() was removed in v14 (#107473) — use page, request, site instead. New in v14: the site.locale expression (#107105)."
     },
     "functions/stdwrap": {
       "level": "tip",

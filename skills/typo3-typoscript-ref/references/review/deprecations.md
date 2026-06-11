@@ -87,6 +87,14 @@ Sources: TYPO3 Core Changelog at docs.typo3.org/c/typo3/cms-core/
 | `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultPageTSconfig']` | Site Sets / extension registration | Removed in v14 | #105377 |
 | `$GLOBALS['TYPO3_CONF_VARS']['BE']['defaultUserTSconfig']` | Site Sets / extension registration | Removed in v14 | #105377 |
 | Default `parseFunc` config in `fluid_styled_content` | Own parseFunc configuration | Removed in v14 | #107438 |
+| `config.absRefPrefix` | `config.forceAbsoluteUrls` (or relative URLs) | Removed in v14 | #108114 |
+| `config.tx_extbase.persistence.updateReferenceIndex` toggle | Always on; remove the line | Removed in v14 | #106041 |
+
+## v14 New Deprecations (deprecated in v14, to be removed in v15)
+
+| Deprecated | Replacement | Status | Changelog |
+|-----------|-------------|--------|-----------|
+| User TSconfig `auth.BE.redirectToURL` | - | Deprecated in v14 | #106969 |
 | Fluid: `LenientArgumentProcessor` | Strict argument types | Deprecated in v14 | #108148 |
 | Fluid: `<f:debug.render>` ViewHelper | - | Deprecated in v14 | #107208 |
 
@@ -94,9 +102,18 @@ Sources: TYPO3 Core Changelog at docs.typo3.org/c/typo3/cms-core/
 
 | Area | Change | Changelog |
 |------|--------|-----------|
+| TypoScript/TSconfig callables (`userFunc`, `postUserFunc`, ...) | Require explicit opt-in registration | #108054 |
 | CDATA sections in Fluid templates | No longer automatically removed | #108148 |
 | Fluid variable names with `_` prefix | No longer allowed | #108148 |
 | CSS file processing | Comments and whitespace no longer removed automatically | #107944 |
 | Asset concatenation/compression | Removed; use build tools instead | #108055 |
 | Fluid 5.0 | Required; Fluid 4.x API incompatibilities | #108148 |
 | `tt_content.list` content element | Removed from core | #105377 |
+
+## v14 New Features Replacing Older Patterns
+
+| Old Pattern | New Approach | Introduced | Notes |
+|------------|--------------|------------|-------|
+| `siteLanguage("locale")` comparisons | `site.locale` expression | v14.0 | #107105 |
+| `EXT:` resource paths | `PKG:vendor/package:path` format (preferred; `EXT:` still works) | v14 | see syntax/stringformats |
+| Static `config.htmlTag.attributes.*` values | `stdWrap` support on `htmlTag.attributes` | v14.0 | #106415 |
