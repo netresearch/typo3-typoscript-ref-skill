@@ -8,7 +8,7 @@
     "frontend/conditions": {
       "level": "required",
       "message": "Legacy conditions ([globalVar = TS:xx], [browser], [system], [device]) were removed in v12. Use Symfony Expression Language exclusively.",
-      "migration": "migration-v12-to-v13.md#conditions"
+      "migration": "migration-v12-to-v13.md#3-removed-typoscript-condition-functions-loginuser-and-usergroup"
     },
     "about/usage": {
       "level": "recommended",
@@ -44,7 +44,7 @@
       "level": "recommended",
       "message": "PAGEVIEW is the recommended page rendering approach in v13+. FLUIDTEMPLATE continues to work but PAGEVIEW requires less configuration.",
       "recipe": "page-setup",
-      "migration": "migration-v12-to-v13.md#fluidtemplate"
+      "migration": "migration-v12-to-v13.md#1-pageview-as-preferred-page-template-object"
     },
     "content-objects/pageview": {
       "level": "recommended",
@@ -113,7 +113,7 @@
       "level": "recommended",
       "message": "Use PAGEVIEW instead of FLUIDTEMPLATE for page rendering in v14. FLUIDTEMPLATE is legacy for page templates (not officially deprecated) and remains valid for non-page rendering such as emails.",
       "recipe": "page-setup",
-      "migration": "migration-v13-to-v14.md#fluidtemplate"
+      "migration": "migration-v12-to-v13.md#1-pageview-as-preferred-page-template-object"
     },
     "content-objects/pageview": {
       "level": "recommended",
@@ -124,7 +124,7 @@
       "level": "required",
       "message": "Site Sets are the required way to provide TypoScript in v14. sys_template-based static includes from extensions are no longer supported.",
       "recipe": "site-sets",
-      "migration": "migration-v13-to-v14.md#site-sets"
+      "migration": "migration-v12-to-v13.md#2-site-sets-replacing-sys_template-includes-and-typoscript-constants"
     },
     "frontend/config": {
       "level": "required",
