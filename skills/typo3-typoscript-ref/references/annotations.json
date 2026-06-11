@@ -7,8 +7,7 @@
     },
     "frontend/conditions": {
       "level": "required",
-      "message": "Legacy conditions ([globalVar = TS:xx], [browser], [system], [device]) were removed in v12. Use Symfony Expression Language exclusively.",
-      "migration": "migration-v12-to-v13.md#3-removed-typoscript-condition-functions-loginuser-and-usergroup"
+      "message": "Legacy conditions ([globalVar = TS:xx], [browser], [system], [device]) were removed in v12. Use Symfony Expression Language exclusively."
     },
     "about/usage": {
       "level": "recommended",
