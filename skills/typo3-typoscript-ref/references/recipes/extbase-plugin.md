@@ -369,10 +369,12 @@ File: `EXT:job_board/Resources/Private/Templates/JobOffer/List.html`
                     </f:for>
                 </div>
 
-                <!-- Pagination: build in the controller (f:widget.paginate was removed in v12):
-                     $paginator = new QueryResultPaginator($jobOffers, $currentPageNumber, $itemsPerPage);
-                     $pagination = new SimplePagination($paginator);
-                     $this->view->assignMultiple(['paginator' => $paginator, 'pagination' => $pagination]); -->
+                <f:comment>
+                    Pagination: build in the controller (f:widget.paginate was removed in v12):
+                    $paginator = new QueryResultPaginator($jobOffers, $currentPageNumber, $itemsPerPage);
+                    $pagination = new SimplePagination($paginator);
+                    $this->view->assignMultiple(['paginator' => $paginator, 'pagination' => $pagination]);
+                </f:comment>
                 <f:if condition="{pagination.allPageNumbers -> f:count()} > 1">
                     <nav class="pagination" aria-label="Pagination">
                         <f:for each="{pagination.allPageNumbers}" as="pageNumber">
