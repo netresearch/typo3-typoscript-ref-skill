@@ -51,6 +51,7 @@ config.admPanel = 1
 ```
 
 The Admin Panel provides tabs for:
+
 - Preview (page, time, workspace)
 - Cache (info and flush)
 - TypoScript (object browser, conditions)
@@ -61,6 +62,7 @@ The Admin Panel provides tabs for:
 Located in Backend > Template module > TypoScript Object Browser.
 
 Use to:
+
 - Inspect the compiled TypoScript tree
 - Search for specific object paths
 - Verify that includes and conditions are applied
@@ -102,8 +104,8 @@ page.10.value = DEBUG: check if this renders
 <f:debug title="My processor result">{myProcessorVariable}</f:debug>
 ```
 
-3. **Check templateRootPaths** — The path must resolve to an existing file. Use absolute EXT: paths or verified filesystem paths.
-4. **Check templateName** — The file name must match exactly (case-sensitive on Linux).
+1. **Check templateRootPaths** — The path must resolve to an existing file. Use absolute EXT: paths or verified filesystem paths.
+2. **Check templateName** — The file name must match exactly (case-sensitive on Linux).
 
 ```typoscript
 10 = FLUIDTEMPLATE
@@ -128,13 +130,29 @@ lib.dynamic {
 }
 ```
 
-2. **Check no_cache** — `config.no_cache = 1` disables caching for the entire page. Use sparingly.
-3. **Check cache tags** — Extensions may set cache tags. Flushing tagged caches via the Admin Panel or CLI can resolve stale content.
-4. **Check condition-dependent content** — Conditions evaluated at cache-build time are baked in. Use `_INT` objects for content that must vary per request.
+1. **Check no_cache** — `config.no_cache = 1` disables caching for the entire page. Use sparingly.
+2. **Check cache tags** — Extensions may set cache tags. Flushing tagged caches via the Admin Panel or CLI can resolve stale content.
+3. **Check condition-dependent content** — Conditions evaluated at cache-build time are baked in. Use `_INT` objects for content that must vary per request.
 
 ### "Why does my condition not work?"
 
 Conditions use Symfony Expression Language since TYPO3 v10. Legacy TypoScript syntax (`[browser = ...]`) is no longer supported.
+
+**v14:** `getTSFE()` was removed from the condition context (#107473). Conditions like
+`[getTSFE() && getTSFE().id == 42]` throw an error or silently never match — rewrite them:
+
+```typoscript
+# Wrong (v13 and earlier):
+[getTSFE() && getTSFE().id == 42]
+
+# Right (v14):
+[page["uid"] == 42]
+# or, where the page record is not available:
+[request?.getPageArguments()?.getPageId() == 42]
+```
+
+Also note: `userFunc` conditions and callables require explicit opt-in registration in v14
+(#108054) — an unregistered callable is skipped without error.
 
 ```typoscript
 # Correct: Symfony Expression Language
@@ -163,6 +181,7 @@ Conditions use Symfony Expression Language since TYPO3 v10. Legacy TypoScript sy
 ```
 
 Available condition variables:
+
 - `page` — current page record fields
 - `request` — PSR-7 request object
 - `site` — current site configuration
