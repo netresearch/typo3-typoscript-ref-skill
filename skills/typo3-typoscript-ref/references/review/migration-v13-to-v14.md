@@ -2,9 +2,8 @@
 
 TypoScript, TSconfig, and Fluid template changes for the upgrade from TYPO3 v13 to v14.
 
-Only confirmed breaking changes are listed. TYPO3 v14 is currently in development (early 2026).
-All items are sourced from the official TYPO3 Core Changelog. See `deprecations.md` for the
-complete overview table.
+TYPO3 v14.3 LTS was released 2026-04-21 and is the current target. All items are sourced from
+the official TYPO3 Core Changelog. See `deprecations.md` for the complete overview table.
 
 Source: TYPO3 Core Changelog at docs.typo3.org/c/typo3/cms-core/
 

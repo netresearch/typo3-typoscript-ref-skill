@@ -54,19 +54,6 @@ Configuration/
       settings.definitions.yaml
 ```
 
-### When to Split vs Single File
-
-Split into multiple files when:
-
-- A logical section exceeds ~100 lines
-- Content types, page config, and navigation each warrant their own file
-- Multiple developers work on the same extension
-
-Keep as single file when:
-
-- Simple site package with minimal TypoScript
-- Extension plugin configuration only
-
 ### Include Order and Override Precedence
 
 Later includes override earlier ones. Order within a sys_template or Site Set:
@@ -227,17 +214,8 @@ lib.pageTitle.htmlSpecialChars = 1
 
 ## Fluid Best Practices
 
-### No Logic in Templates
-
-Move conditions and data transformation to DataProcessors or ViewHelpers. Templates should only render, not compute.
-
-```html
-<!-- Bad: logic in template -->
-<f:if condition="{item.items -> f:count()} > 3">...</f:if>
-
-<!-- Good: pre-computed in DataProcessor -->
-<f:if condition="{hasEnoughItems}">...</f:if>
-```
+See `review/common-mistakes.md` (Fluid Mistakes) for the logic-in-templates and
+`f:format.raw` pitfalls.
 
 ### Labels
 
@@ -267,19 +245,8 @@ Always use `f:translate` for user-facing strings. Never hardcode strings.
 
 Avoid duplicating markup — extract partials aggressively.
 
-### Escaping
-
-Fluid escapes output by default. Only bypass escaping when you have verified the content is safe (e.g., sanitized HTML from RTE).
-
-```html
-<!-- Auto-escaped — safe by default -->
-{item.title}
-
-<!-- Raw output — only for trusted, pre-sanitized HTML -->
-<f:format.raw>{item.bodytext}</f:format.raw>
-```
-
-Never use `f:format.raw` for user-generated content without prior sanitization.
+See `review/security.md` (Fluid XSS Prevention) for auto-escaping and `f:format.raw`
+rules.
 
 ### Components (v13+)
 
