@@ -214,7 +214,7 @@ lib.pageTitle.htmlSpecialChars = 1
 
 ## Fluid Best Practices
 
-See `references/review/common-mistakes.md` (Fluid Mistakes) for the logic-in-templates and
+See `review/common-mistakes.md` (Fluid Mistakes) for the logic-in-templates and
 `f:format.raw` pitfalls.
 
 ### Labels
@@ -245,7 +245,7 @@ Always use `f:translate` for user-facing strings. Never hardcode strings.
 
 Avoid duplicating markup — extract partials aggressively.
 
-See `references/review/security.md` (Fluid XSS Prevention) for auto-escaping and `f:format.raw`
+See `review/security.md` (Fluid XSS Prevention) for auto-escaping and `f:format.raw`
 rules.
 
 ### Components (v13+)
