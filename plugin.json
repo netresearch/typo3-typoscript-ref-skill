@@ -8,7 +8,7 @@
     "url": "https://www.netresearch.de/"
   },
   "repository": "https://github.com/netresearch/typo3-typoscript-ref-skill",
-  "license": "MIT",
+  "license": "(MIT AND CC-BY-SA-4.0)",
   "keywords": [
     "typo3",
     "typoscript",
