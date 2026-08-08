@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "typo3-typoscript-ref",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "TYPO3 TypoScript, TSconfig and Fluid reference with version-aware local lookup",
   "author": {
     "name": "Netresearch DTT GmbH",
