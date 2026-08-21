@@ -178,5 +178,13 @@
       { "type": "content", "pattern": "(TSFE.*(removed|not available|v14)|v14.*TSFE)" },
       { "type": "content", "pattern": "page\\s*:\\s*uid|page:uid" }
     ]
+  },
+  {
+    "name": "fluid_unbraced_condition",
+    "prompt": "In a TYPO3 Fluid partial the f:else branch of <f:if condition=\"accessTokens\"> never renders, not even when the user has no access tokens. Why?",
+    "assertions": [
+      { "type": "content", "pattern": "\\{accessTokens\\}" },
+      { "type": "content", "pattern": "(string|literal|always (true|truthy))" }
+    ]
   }
 ]

@@ -116,6 +116,64 @@ page.10.value = DEBUG: check if this renders
 }
 ```
 
+### "Why does my `f:if` always take the same branch?"
+
+Because the condition is a string, not the variable. Braces are not optional in
+`condition`:
+
+```html
+<!-- Wrong: the literal string "items" is always truthy -->
+<f:if condition="items">
+    <f:then>...</f:then>
+    <f:else>You have no items.</f:else>
+</f:if>
+
+<!-- Right -->
+<f:if condition="{items}">
+```
+
+The `f:else` branch is unreachable in the wrong form — for every user, in every
+state. It is a quiet defect: nothing throws, the page renders, and the branch
+that never runs is usually the empty state, which nobody with data ever sees.
+It survives review because the two forms differ by two characters and the wrong
+one reads like a variable.
+
+The tell that identifies it as string truthiness rather than an empty-value
+question: the wrong form takes `f:then` even when the variable is **never
+assigned at all**. Measured on Fluid 4.6.1, `condition="items"` returns `THEN`
+for `[]`, `null`, `false`, `0`, `''` and for the unassigned case, while
+`condition="{items}"` returns `ELSE` for all six.
+
+Prove it against the version the project actually runs, not the one you assume:
+
+```bash
+# in a scratch directory, NOT the project
+# --no-plugins is required: typo3/cms-fluid pulls typo3/cms-composer-installers,
+# and composer refuses to run an unlisted plugin in a fresh project
+composer require typo3fluid/fluid:4.6.1 typo3/cms-fluid:v13.4.34 \
+  --no-interaction --ignore-platform-reqs --no-plugins
+```
+
+```php
+$view = new \TYPO3Fluid\Fluid\View\TemplateView();
+$context = $view->getRenderingContext();
+// f:format.date and friends live in typo3/cms-fluid, not in standalone Fluid
+$context->getViewHelperResolver()->addNamespace('f', 'TYPO3\\CMS\\Fluid\\ViewHelpers');
+// In Fluid 4, render($name) resolves $name as a controller action
+$context->getTemplatePaths()->setTemplatePathAndFilename($file);
+$view->assign('items', []);
+echo $view->render();
+```
+
+Two traps in that harness: read the *installed* version from
+`vendor/composer/installed.json` rather than `composer.lock` before reporting
+which Fluid you measured on — a stale checkout can be a whole major behind —
+and pin `$GLOBALS['EXEC_TIME']` if the template calls
+`f:format.date(date: 'now')`, or two runs of the same template will not be
+comparable. Extbase-only view helpers (`f:link.action`, `f:uri.action`) need a
+request; stub them identically on both sides when comparing two versions of a
+template.
+
 ### "Why is my page cached incorrectly?"
 
 1. **Use COA_INT for dynamic content** — `COA_INT` (and `USER_INT`) is rendered on every request while the rest of the page stays cached (placeholder-based).
