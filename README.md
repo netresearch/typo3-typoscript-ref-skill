@@ -80,7 +80,20 @@ standards.
 
 ```bash
 /plugin marketplace add netresearch/claude-code-marketplace
+/plugin install typo3-typoscript-ref@netresearch-claude-code-marketplace
 ```
+
+### Without a marketplace
+
+Since Claude Code 2.1.157 a plugin directory under your personal skills directory loads on its own:
+
+```bash
+mkdir -p ~/.claude/skills
+git clone https://github.com/netresearch/typo3-typoscript-ref-skill.git \
+  ~/.claude/skills/typo3-typoscript-ref
+```
+
+It loads as `typo3-typoscript-ref@skills-dir` on the next session. Update with `git -C ~/.claude/skills/typo3-typoscript-ref pull` and start a new session; remove it by deleting the directory. This route has no `claude plugin update`.
 
 Then install the skill via `/plugin`.
 
