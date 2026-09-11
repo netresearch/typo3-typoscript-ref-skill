@@ -1,6 +1,6 @@
 {
   "name": "typo3-typoscript-ref",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "TYPO3 TypoScript, TSconfig and Fluid reference with version-aware local lookup",
   "author": {
     "name": "Netresearch DTT GmbH",
