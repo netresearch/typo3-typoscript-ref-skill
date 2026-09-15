@@ -293,3 +293,5 @@ page.10.wrap >
 ```
 
 Use `=<` (reference) for `lib.*` objects to ensure a single source of truth. Use `<` (copy) when you need an independent variant that you will modify separately.
+
+Both operators fail silently when the target does not exist: TYPO3 resolves the path segment by segment and keeps the value of the deepest one it finds, so a reference into a removed path renders that ancestor instead of erroring. See `references/review/common-mistakes.md` → "Reference Into a Path That No Longer Exists".
