@@ -61,8 +61,9 @@ standards.
 - Bash 4+
 - Network access on first run (`scripts/lookup.sh --update`); all lookups are
   served from the local cache afterwards
-- A `composer.json` in the project for automatic TYPO3 version detection
-  (falls back to the latest supported version)
+- A `composer.json` or `composer.lock` in the project for automatic TYPO3
+  version detection from `typo3/cms-core` (without it, the lookup uses
+  `main`, the development branch of the upstream documentation)
 
 ## Features
 
@@ -176,8 +177,8 @@ scripts/lookup.sh --debug "The page is not configured"
 | risk_level | low |
 
 `agents/openai.yaml` is intentionally absent: the skill targets Claude Code;
-other agent platforms are served via the Composer and npm distribution
-channels (documented exception per skill-repo validation checklist).
+other agent platforms are served via the Composer distribution channel
+(documented exception per skill-repo validation checklist).
 
 When discovery-relevant fields change (description, topics, summary), update
 the marketplace entry in `netresearch/claude-code-marketplace` as well.
