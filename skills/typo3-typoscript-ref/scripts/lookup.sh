@@ -662,7 +662,7 @@ mode_debug() {
                 # End of previous matching section
                 echo ""
             fi
-            if echo "$line" | grep -qiF "$DEBUG_MSG"; then
+            if echo "$line" | grep -qiF -- "$DEBUG_MSG"; then
                 in_section=true
                 found=true
                 echo "$line"
@@ -677,7 +677,7 @@ mode_debug() {
     # Also try grep-based search in case the error text is in the body
     if [[ "$found" == false ]]; then
         local grep_match
-        grep_match=$(grep -inF "$DEBUG_MSG" "$debug_file" 2>/dev/null || true)
+        grep_match=$(grep -inF -- "$DEBUG_MSG" "$debug_file" 2>/dev/null || true)
         if [[ -n "$grep_match" ]]; then
             echo "Matching lines in debugging.md:"
             echo "$grep_match"

@@ -156,6 +156,16 @@ expect "--debug prints the matching section" 0 stdout "## Debugging Tools"
 run --debug "zz-no-such-error-zz"
 expect "--debug without a match prints the suggestions" 0 stdout "No matching error found for: zz-no-such-error-zz"
 
+# A message that starts with a dash is searched for, not parsed by grep as an
+# option (which made grep take the file name as the pattern and read stdin).
+printf 'stdin-marker %s\n' "$REPO/skills/typo3-typoscript-ref/references/debugging.md" >"$TMP/stdin"
+RC=0
+(cd "$WORK" && bash "$LOOKUP" --debug "-zz-dash-message" <"$TMP/stdin") >"$TMP/stdout" 2>"$TMP/stderr" || RC=$?
+expect "--debug with a message starting with a dash" 0 stdout "No matching error found for: -zz-dash-message" stdout "!stdin-marker" stderr "!grep:"
+RC=0
+(cd "$WORK" && bash "$LOOKUP" --debug "-9" <"$TMP/stdin") >"$TMP/stdout" 2>"$TMP/stderr" || RC=$?
+expect "--debug with a dash-digit message does not read stdin" 0 stdout "No matching error found for: -9" stdout "!stdin-marker"
+
 # --- lint rules --------------------------------------------------------------------
 
 run --lint-rules
