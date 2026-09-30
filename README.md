@@ -207,6 +207,61 @@ that repository against this repo root.
 Content changes (references, recipes, annotations) must be verified against
 the official TYPO3 documentation for the affected version.
 
+The components, actors and data flows are described in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); what the skill does and does not
+guarantee in terms of security is in
+[docs/SECURITY-ASSURANCE.md](docs/SECURITY-ASSURANCE.md).
+
+## Tests
+
+The tests under `tests/` run the shipped scripts and check what they print, write and return. They need `bash`, `python3` and the usual coreutils; they make no network request and write only to temporary directories.
+
+- `tests/detect-version.sh`: `composer.lock` before `composer.json`, `packages-dev` and `require-dev`, the constraint forms (`v13.4.2`, `^13.4`, `~12.4`, `>=12.4,<13`, `dev-main`), unparsable files, the five-parent search limit, and rejected arguments.
+- `tests/lookup.sh`: every mode (`--recipe`, `--checklist`, `--deprecations`, `--debug`, `--lint-rules`, keyword lookup with `--with-fluid` and `--review`, `--update`) against the shipped references and a fixture cache, run from a temporary copy of the skill; `--update` runs with a stub `gh` that always fails.
+- `tests/fetch-docs.sh`: the whole download pipeline with a stub `gh` that serves a fixture `Documentation/` tree: which files are selected, the cache paths, the conversion, error counting, annotations, `--cache-dir`, and rejected arguments.
+- `tests/rst2md.py`: headings, code blocks, admonitions, roles, `confval`, dropped directives, whitespace clean-up, and the stdin-to-stdout call.
+
+The curated references, `evals/evals.json` and the prose of `SKILL.md` have no behavioural test; CI checks their structure.
+
+Run the tests and the hooks from the repository root:
+
+```bash
+for t in tests/*.sh; do bash "$t"; done
+python3 tests/rst2md.py
+pre-commit run --all-files
+```
+
+Each case prints `ok <case>`, or `FAIL <case>` followed by what was expected and what was found; the last line counts passed and failed cases, and the file exits 1 when a case failed. The pre-commit hooks in `.pre-commit-config.yaml` run the skill validator, the version-parity check, markdownlint, yamllint, actionlint, JSON and YAML syntax, ruff and ShellCheck.
+
+In CI, `tests.yml` (Skill Tests) runs every `tests/**/*.sh` and `tests/**/*.py` on each pull request and push to `main`, marks a failing file with an error annotation, and fails when the scripts under `skills/*/scripts/` have no test at all. A change to a script comes with a test that fails without the change; new functionality comes with tests.
+
+## Dependencies
+
+- **Scripts:** `bash` 4+, `python3` (standard library only) and coreutils (`base64`, `find`, `grep`, `sed`, `tr`). `fetch-docs.sh`, and so `lookup.sh --update`, also needs the GitHub CLI `gh` with a login. `lookup.sh --lint-rules` uses PyYAML when it is installed and prints the raw file otherwise. The scripts install nothing.
+- **Documentation sources:** the four upstream repositories and the branch per TYPO3 version are listed in `skills/typo3-typoscript-ref/references/version-map.json`; the downloaded pages live in the untracked `cache/` directory.
+- **Composer:** `composer.json` requires `netresearch/composer-agent-skill-plugin` (constraint `*`), the Composer plugin that installs packages of type `ai-agent-skill`. No lock file is committed (the skill validator rejects `composer.lock` in skill repositories): the package is installed as a dependency of other projects, whose lock files pin it.
+- **Tests:** `bash`, `python3` and coreutils; `gh` is replaced by a stub.
+- **Pre-commit hooks:** each hook repository in `.pre-commit-config.yaml` is pinned by `rev:`.
+- **CI:** the workflows call reusable workflows of `netresearch/skill-repo-skill`, `netresearch/.github` and `netresearch/typo3-ci-workflows` at `@main`; those pin their third-party actions by commit SHA.
+- **Updates:** Renovate (`renovate.json`, preset `github>netresearch/renovate-config`) opens pull requests for new versions, including the pre-commit hook revisions; `auto-merge-deps.yml` enables auto-merge for Renovate and Dependabot pull requests, which GitHub merges once the required checks pass. Composer Audit and dependency review check dependency changes on pull requests.
+- **Selection:** a new dependency is added only when a script or the tooling needs it, from its upstream source (Packagist, PyPI, the tool's own repository), under a licence the organisation's [findings policy](https://github.com/netresearch/.github/blob/main/SECURITY.md#handling-of-dependency-and-code-analysis-findings) accepts.
+
+## Governance and policies
+
+This repository follows the Netresearch organisation policies:
+
+- [Governance](https://github.com/netresearch/.github/blob/main/GOVERNANCE.md): ownership, roles, how decisions are made and disputes resolved.
+- [Roadmap](https://github.com/netresearch/.github/blob/main/ROADMAP.md): planned and explicitly excluded work for the coming year.
+- [Handling of dependency and code analysis findings](https://github.com/netresearch/.github/blob/main/SECURITY.md#handling-of-dependency-and-code-analysis-findings): thresholds, deadlines and the exception process for dependency (SCA) and static analysis (SAST) findings.
+- [Secret management](https://github.com/netresearch/.github/blob/main/SECURITY.md#secret-management): how CI and release credentials are stored, accessed and rotated.
+- [Access roster](https://github.com/netresearch/.github/blob/main/docs/access-roster.md): who holds administrative access to this repository and the organisation.
+
+Checks that run on pull requests in this repository:
+
+- Every pull request: Skill Validation (`lint.yml`: skill structure, manifest sync, markdownlint, yamllint, actionlint, JSON syntax, ShellCheck, ruff, checkpoint schemas), Eval Validation (`eval-validate.yml`) and Skill Tests (`tests.yml`).
+- Pull requests to `main`: `security.yml` with Composer Audit, SAST (Opengrep, `--config auto --error --severity WARNING`), Betterleaks secret scanning, zizmor and dependency review (`fail-on-severity: high`); Harness Verification (`harness-verify.yml`); Template Drift (`check-template-drift.yml`); and the DCO sign-off check.
+- Required for merging into `main`: Skill Validation, Eval Validation, Composer Audit, SAST (Opengrep), Secret Scanning (Betterleaks) and DCO; commits must be signed.
+
 ## License
 
 MIT (code) and CC-BY-SA-4.0 (documentation content) — see `LICENSE-MIT` and
