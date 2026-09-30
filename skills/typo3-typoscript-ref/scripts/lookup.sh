@@ -472,20 +472,20 @@ mode_deprecations() {
 
     if [[ -n "$VERSION" ]]; then
         validate_version "$VERSION"
-        # Filter to the version's section
-        # Sections are expected as ## v12, ## v13, etc.
+        # Print every section headed "## v<major> ...". A heading is matched
+        # on its leading version only: "## v13 New Deprecations (... to be
+        # removed in v14)" belongs to v13, not to v14.
+        local major="${VERSION%%.*}"
         local section_found=false
         local in_section=false
         while IFS= read -r line; do
             if [[ "$line" =~ ^##[[:space:]] ]]; then
-                if echo "$line" | grep -qi "v${VERSION}\|version ${VERSION}\|${VERSION}\."; then
+                if [[ "$line" =~ ^##[[:space:]]+v${major}[[:space:]] ]]; then
                     in_section=true
                     section_found=true
                     echo "$line"
                 else
-                    if [[ "$in_section" == true ]]; then
-                        break
-                    fi
+                    in_section=false
                 fi
             elif [[ "$in_section" == true ]]; then
                 echo "$line"

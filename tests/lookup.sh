@@ -126,7 +126,18 @@ run --deprecations
 expect "--deprecations without a version prints the whole file" 0 stdout "## v12 Removals" stdout "## v14 Removals"
 
 run --deprecations --version 13
-expect "--deprecations --version 13 prints the v13 sections" 0 stdout "## v13 Removals" stdout "## v13 New Deprecations" stdout "!## v12 Removals"
+expect "--deprecations --version 13 prints the v13 sections" 0 stdout "## v13 Removals" stdout "## v13 New Deprecations" stdout "!## v12 Removals" stdout "!## v14 Removals"
+
+# "## v13 New Deprecations (... to be removed in v14)" precedes the v14
+# sections and names v14 in its text; it must not end the v14 output.
+run --deprecations --version 14
+expect "--deprecations --version 14 prints every v14 section" 0 stdout "## v14 Removals" stdout "## v14 New Deprecations" stdout "## v14 Breaking Behavior Changes" stdout "## v14 New Features Replacing Older Patterns" stdout "!## v13 New Deprecations"
+
+run --deprecations --version 12
+expect "--deprecations --version 12 stops at the v13 sections" 0 stdout "## v12 Removals" stdout "### v12 Breaking Syntax Changes" stdout "!## v13 Removals"
+
+run --deprecations --version 13.4
+expect "--deprecations accepts a minor version" 0 stdout "## v13 Removals" stdout "!## v14 Removals"
 
 run --deprecations --version 99
 expect "--deprecations for a version without a section falls back to the whole file" 0 stderr "No deprecations section found for version 99" stdout "## v12 Removals"
