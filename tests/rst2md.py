@@ -66,6 +66,18 @@ CASES = [
         [],
     ),
     (
+        "admonition body indented by three spaces keeps its text",
+        ".. note::\n   Mind the gap.\n",
+        ["> **Note:**\n> Mind the gap."],
+        [],
+    ),
+    (
+        "admonition keeps relative indentation of nested lines",
+        ".. warning::\n   First line.\n\n   *  item\n      continued\n",
+        ["> First line.", "> *  item", ">    continued"],
+        [],
+    ),
+    (
         "double-backtick literal becomes a code span",
         "Use ``stdWrap.wrap`` here.\n",
         ["Use `stdWrap.wrap` here."],
