@@ -38,18 +38,20 @@ set also carries the v12 and v13 migration paths.
 ## Commands
 
 - `bash skills/typo3-typoscript-ref/scripts/lookup.sh <term>` — search the reference set
-- `bash skills/typo3-typoscript-ref/scripts/detect-version.sh <project>` — read the project's TYPO3 version
-- `bash skills/typo3-typoscript-ref/scripts/fetch-docs.sh` — refresh from upstream docs
-- `pre-commit run --all-files` — the full local gate (yamllint, markdownlint, skill validation, version parity)
+- `bash skills/typo3-typoscript-ref/scripts/detect-version.sh --path <project>` — read the project's TYPO3 version (default: the working directory)
+- `bash skills/typo3-typoscript-ref/scripts/fetch-docs.sh --version <major>` — refresh one source from upstream docs (`lookup.sh --update` fetches all four)
+- `pre-commit run --all-files` — the local hooks (skill validation, version parity, markdownlint, yamllint, actionlint, JSON/YAML syntax, ruff, ShellCheck)
 
 ## Conventions
 
-- `SKILL.md` has a hard **500-word cap**, counted over the whole file including
-  frontmatter. Detail belongs in `references/`.
+- `SKILL.md` body must stay under **500 lines** (the validator counts the lines
+  after the frontmatter). Detail belongs in `references/`.
 - `references/topic-index.md` is the routing table. A new reference that is not
   listed there is effectively invisible — add the entry in the same commit.
-- The version in `.claude-plugin/plugin.json`, `composer.json` and `SKILL.md`
-  metadata must match; CI fails on drift.
+- The version lives in the root `plugin.json`; `.claude-plugin/plugin.json` is
+  generated from it and must match, and a `SKILL.md` `metadata.version`, if
+  present, must match too. `composer.json` carries no version (the release
+  derives it from the git tag). CI and the pre-commit hook fail on drift.
 - Split licensing: MIT for code, CC-BY-SA-4.0 for prose.
 - Shared workflows come from `netresearch/.github/templates/skill` and are
   byte-governed by `check-template-drift`. Fix them upstream, not here; record
