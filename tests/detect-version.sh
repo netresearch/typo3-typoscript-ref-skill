@@ -15,6 +15,24 @@ SCRIPT="${ROOT}/skills/typo3-typoscript-ref/scripts/detect-version.sh"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
+# Precondition. detect-version.sh looks for composer.lock, then composer.json,
+# in the start directory and up to five parents. Most cases start in
+# $TMP/<case>, so the search also reaches $TMP and four of its ancestors
+# (usually /tmp and /). A composer file there would silently change the
+# expected "main" or the lock/json precedence, so stop with its path instead.
+guard_dir="$TMP"
+for _ in 1 2 3 4 5; do
+    for name in composer.lock composer.json; do
+        if [[ -e "${guard_dir}/${name}" ]]; then
+            echo "FAIL precondition: ${guard_dir}/${name} exists within reach of detect-version.sh's search;" \
+                "remove it or set TMPDIR to a directory without composer files above it" >&2
+            exit 1
+        fi
+    done
+    [[ "$guard_dir" == "/" ]] && break
+    guard_dir="$(dirname "$guard_dir")"
+done
+
 PASS=0
 FAIL=0
 
