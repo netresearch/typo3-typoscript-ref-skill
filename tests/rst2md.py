@@ -18,6 +18,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "skills" / "typo3-typoscript-ref" / "scripts" / "rst2md.py"
 
+# Loading the module would otherwise leave scripts/__pycache__/ behind, which
+# the Skill Tests reusable then counts as a shipped script.
+sys.dont_write_bytecode = True
+
 spec = importlib.util.spec_from_file_location("rst2md", SCRIPT)
 rst2md = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rst2md)
