@@ -30,6 +30,10 @@ set also carries the v12 and v13 migration paths.
 │       ├── detect-version.sh             # Determine the project's TYPO3 version
 │       ├── fetch-docs.sh                 # Pull upstream docs
 │       └── rst2md.py                     # Convert fetched RST to Markdown
+├── tests/                                # Behavioural tests for the scripts (tests.yml)
+├── docs/
+│   ├── ARCHITECTURE.md                   # Components, actors, data flows
+│   └── SECURITY-ASSURANCE.md             # Security requirements, threats, limits
 ├── .claude-plugin/plugin.json            # Plugin manifest
 ├── composer.json                         # Packagist distribution
 └── README.md
@@ -40,6 +44,7 @@ set also carries the v12 and v13 migration paths.
 - `bash skills/typo3-typoscript-ref/scripts/lookup.sh <term>` — search the reference set
 - `bash skills/typo3-typoscript-ref/scripts/detect-version.sh --path <project>` — read the project's TYPO3 version (default: the working directory)
 - `bash skills/typo3-typoscript-ref/scripts/fetch-docs.sh --version <major>` — refresh one source from upstream docs (`lookup.sh --update` fetches all four)
+- `for t in tests/*.sh; do bash "$t"; done; python3 tests/rst2md.py` — the behavioural tests (offline; see README "Tests")
 - `pre-commit run --all-files` — the local hooks (skill validation, version parity, markdownlint, yamllint, actionlint, JSON/YAML syntax, ruff, ShellCheck)
 
 ## Conventions
@@ -73,3 +78,5 @@ set also carries the v12 and v13 migration paths.
 - What the skill does and when it triggers → `skills/typo3-typoscript-ref/SKILL.md`
 - Any lookup → `skills/typo3-typoscript-ref/references/topic-index.md`
 - Reviewing someone's TypoScript → `skills/typo3-typoscript-ref/references/review/review-checklist.md`
+- How the scripts work together → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Security guarantees and limits of the scripts → [docs/SECURITY-ASSURANCE.md](docs/SECURITY-ASSURANCE.md)
