@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+
 """Convert TYPO3 reStructuredText documentation to compact Markdown.
 
 Reads raw .rst content from stdin, outputs clean Markdown to stdout.

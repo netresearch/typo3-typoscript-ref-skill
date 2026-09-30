@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
+
 # TYPO3 TypoScript Reference Skill
 
 Version-aware TypoScript, TSconfig and Fluid reference lookup for Claude Code

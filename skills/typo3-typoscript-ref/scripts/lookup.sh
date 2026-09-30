@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+
 set -euo pipefail
 
 # All-in-one lookup script for TYPO3 TypoScript reference.

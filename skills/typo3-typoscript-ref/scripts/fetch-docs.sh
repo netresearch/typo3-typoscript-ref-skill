@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+
 set -euo pipefail
 
 # Download TYPO3 documentation .rst files from GitHub, convert to Markdown
