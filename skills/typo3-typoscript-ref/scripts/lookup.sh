@@ -136,7 +136,9 @@ fi
 # Detect TYPO3 version (uses detect-version.sh or --version flag)
 validate_version() {
     local v="$1"
-    if [[ ! "$v" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    # The version names a directory under the cache: it must start with a
+    # letter or digit, so "." and ".." cannot point outside the cache.
+    if [[ ! "$v" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
         echo "Error: invalid version string: ${v}" >&2
         exit 1
     fi

@@ -224,6 +224,19 @@ else
     not_ok "annotating twice keeps one annotation" "found ${count} annotation lines"
 fi
 
+# --- version names that are not a directory name under the cache ---------------------------
+
+run --version .. --source typoscript
+expect_exit "--version .. is rejected" 1
+expect_grep "--version .. is named as invalid" "$TMP/stderr" "invalid version string: .."
+expect_no_file "--version .. writes nothing beside the cache" "$REPO/typoscript"
+
+run --version .hidden --source typoscript
+expect_exit "--version starting with a dot is rejected" 1
+
+run --version 13.4 --source typoscript --cache-dir "$TMP/minor"
+expect_exit "--version with a minor version is accepted" 0
+
 # --- sources, branches and cache directory --------------------------------------------------
 
 upstream_file Documentation/ApiOverview/Fluid/Index.rst <<'RST'

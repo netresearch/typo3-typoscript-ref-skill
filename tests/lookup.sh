@@ -98,6 +98,12 @@ expect "keyword mode without keywords" 1 stderr "no search keywords provided"
 run "TEXT" --version '13;id'
 expect "--version with a shell metacharacter is rejected" 1 stderr "invalid version string"
 
+run "TEXT" --version ..
+expect "--version .. is rejected" 1 stderr "invalid version string: .."
+
+run --deprecations --version .
+expect "--deprecations --version . is rejected" 1 stderr "invalid version string: ."
+
 # --- recipe ----------------------------------------------------------------------
 
 run --recipe page-setup
@@ -209,6 +215,10 @@ chmod +x "$TMP/bin/gh"
 RC=0
 (cd "$WORK" && PATH="$TMP/bin:$PATH" bash "$LOOKUP" --update --version 13) >"$TMP/stdout" 2>"$TMP/stderr" || RC=$?
 expect "--update reports a failed source and completes" 0 stdout "stub gh: offline" stderr "Warning: failed to fetch typoscript docs." stderr "=== Fetching coreapi ===" stderr "Update complete."
+
+RC=0
+(cd "$WORK" && PATH="$TMP/bin:$PATH" bash "$LOOKUP" --update --version ..) >"$TMP/stdout" 2>"$TMP/stderr" || RC=$?
+expect "--update --version .. is rejected before anything is fetched" 1 stderr "invalid version string: .." stdout "!stub gh"
 
 echo
 echo "lookup.sh: ${PASS} passed, ${FAIL} failed"

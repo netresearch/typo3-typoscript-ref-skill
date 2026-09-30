@@ -59,7 +59,9 @@ if [[ -z "$VERSION" ]]; then
     exit 1
 fi
 
-if [[ ! "$VERSION" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+# The version names a directory under the cache: it must start with a letter
+# or digit, so "." and ".." cannot point the output outside the cache.
+if [[ ! "$VERSION" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
     echo "Error: invalid version string: ${VERSION}" >&2
     exit 1
 fi
