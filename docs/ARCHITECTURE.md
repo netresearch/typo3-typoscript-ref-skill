@@ -32,7 +32,7 @@ This document describes the components the repository ships, the actors that use
 
 ### Version detection
 
-`detect-version.sh [--path <dir>]` looks for `composer.lock` in the start directory (default: the working directory) and up to five parent directories, and reads the version of `typo3/cms-core` from `packages` or `packages-dev`. Without a result it does the same for `composer.json` and reads the constraint from `require` or `require-dev`. It prints the first number of the version (`v13.4.2` → `13`, `^12.4` → `12`), or `main` for `dev-main`, `dev-master`, an unparsable file or no match. The JSON is parsed by `python3`; the file path is passed in an environment variable.
+`detect-version.sh [--path <dir>]` looks for `composer.lock` in the start directory (default: the working directory) and up to five parent directories, and reads the version of `typo3/cms-core` from `packages` or `packages-dev`. Without a result it does the same for `composer.json` and reads the constraint from `require` or `require-dev`. It prints the first number of the version (`v13.4.2` → `13`, `^12.4` → `12`), or `main` for `dev-main` or `dev-master`, and when neither file yields a usable version: an unparsable `composer.lock` falls through to `composer.json`, and only when that gives nothing either is the answer `main`. The JSON is parsed by `python3`; the file path is passed in an environment variable.
 
 ### Filling the cache
 
@@ -43,7 +43,7 @@ This document describes the components the repository ships, the actors that use
 1. validates `--version` (letters, digits, `.`, `_`, `-`, starting with a letter or digit) and `--source`, and requires `gh`;
 2. maps the version to a branch or tag with `version-map.json` (`typo3_to_docs`); a value not in the map is used as the branch;
 3. lists the repository tree with `gh api repos/<repo>/git/trees/<branch>?recursive=1` and keeps `.rst` files under `Documentation/` (for `coreapi` only `Documentation/ApiOverview/Fluid/`), skipping `_includes/`, `_snippets/`, `CodeSnippets/`, `Images/`, `_ext/` and the meta pages `Sitemap`, `genindex`, `search`, `Targets`, `404`;
-4. downloads each file with `gh api repos/<repo>/contents/<path>?ref=<branch>`, five at a time, base64-decodes it, pipes it through `rst2md.py` and writes `cache/<version>/<source>/<lowercased path>.md` (`Dir/Name/Index.rst` becomes `dir/name.md`); a failed download or conversion leaves no file and counts as an error; the script still exits 0 and prints the counts;
+4. downloads each file with `gh api repos/<repo>/contents/<path>?ref=<branch>`, five at a time, base64-decodes it, pipes it through `rst2md.py` and writes `cache/<version>/<source>/<lowercased path>.md` (`Dir/Name/Index.rst` becomes `dir/name.md`); a failed download or conversion leaves no file, removes a copy cached by an earlier run, and counts as an error; the script still exits 0 and prints the counts;
 5. with `--annotate`, prepends the `annotations.json` entry for the version as a blockquote to the mapped cache pages, replacing an earlier annotation.
 
 `--cache-dir <path>` replaces the default cache directory.
