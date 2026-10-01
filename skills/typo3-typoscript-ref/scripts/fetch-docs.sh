@@ -216,13 +216,17 @@ download_and_convert() {
 
     mkdir -p "$(dirname "$full_path")"
 
-    # Download raw content via GitHub API, decode base64
+    # Download raw content via GitHub API, decode base64. On any failure the
+    # cached copy from an earlier run is removed too, so a failed refresh does
+    # not leave an older page that reads as current.
     local content
     if ! content=$(gh api "repos/${REPO}/contents/${src_path}?ref=${BRANCH}" --jq '.content' 2>/dev/null); then
+        rm -f "$full_path"
         return 1
     fi
 
     if [[ -z "$content" ]] || [[ "$content" == "null" ]]; then
+        rm -f "$full_path"
         return 1
     fi
 

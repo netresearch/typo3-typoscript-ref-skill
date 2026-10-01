@@ -181,6 +181,9 @@ expect_grep "missing gh names the tool" "$TMP/stderr" "'gh' (GitHub CLI) is requ
 
 # --- download and convert ------------------------------------------------------------------
 
+# A page cached by an earlier run: the failed refresh below must remove it.
+mkdir -p "$REPO/cache/13/typoscript/functions"
+printf 'stale\n' >"$REPO/cache/13/typoscript/functions/broken.md"
 run --version 13 --source typoscript
 OUT="$REPO/cache/13/typoscript"
 expect_exit "fetch with one failing file exits 0" 0
@@ -190,7 +193,7 @@ expect_grep "the failing file is named" "$TMP/stderr" "failed to process Documen
 expect_file "top-level Index.rst becomes index.md" "$OUT/index.md"
 expect_file "Dir/Name/Index.rst becomes dir/name.md" "$OUT/contentobjects/pageview.md"
 expect_file "Dir/Name.rst becomes dir/name.md" "$OUT/functions/stdwrap.md"
-expect_no_file "a failed download leaves no file" "$OUT/functions/broken.md"
+expect_no_file "a failed download leaves no file, also not an earlier cached copy" "$OUT/functions/broken.md"
 expect_no_file "_includes/ is skipped" "$OUT/_includes"
 expect_no_file "Images/ is skipped" "$OUT/images"
 expect_no_file "Sitemap.rst is skipped" "$OUT/sitemap.md"
