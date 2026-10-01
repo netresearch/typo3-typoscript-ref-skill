@@ -262,7 +262,7 @@ This repository follows the Netresearch organisation policies:
 Checks that run on pull requests in this repository:
 
 - Every pull request: Skill Validation (`lint.yml`: skill structure, manifest sync, markdownlint, yamllint, actionlint, JSON syntax, ShellCheck, ruff, checkpoint schemas), Eval Validation (`eval-validate.yml`) and Skill Tests (`tests.yml`).
-- Pull requests to `main`: `security.yml` with Composer Audit, SAST (Opengrep, `--config auto --error --severity WARNING`), Betterleaks secret scanning, zizmor and dependency review (`fail-on-severity: high`); Harness Verification (`harness-verify.yml`); Template Drift (`check-template-drift.yml`); and the DCO sign-off check.
+- Pull requests to `main`: `security.yml` with Composer Audit, SAST (Opengrep, `--config auto`; which findings fail the check is set by the [organisation rule](https://github.com/netresearch/.github/blob/main/SECURITY.md#static-analysis-sast)), Betterleaks secret scanning, zizmor and dependency review (`fail-on-severity: high`); Harness Verification (`harness-verify.yml`); Template Drift (`check-template-drift.yml`); and the DCO sign-off check.
 - Required for merging into `main`: Skill Validation, Eval Validation, Composer Audit, SAST (Opengrep), Secret Scanning (Betterleaks) and DCO; commits must be signed.
 
 ## License
