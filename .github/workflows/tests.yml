@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+
+name: Skill Tests
+
+# Runs this repo's behavioural tests (tests/**/*.sh, tests/**/*.py) via the
+# skill-repo-skill reusable: detect-version.sh, lookup.sh, fetch-docs.sh (with
+# a stub gh, offline) and rst2md.py. The other workflows validate structure,
+# lint and security; none of them executes a shipped script. require_tests
+# fails the job if the scripts under skills/*/scripts/ ever lose their tests.
+# Not part of the central skill template, so it carries its own notice.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions: {}
+
+jobs:
+  tests:
+    uses: netresearch/skill-repo-skill/.github/workflows/tests.yml@main
+    with:
+      require_tests: true
+    permissions:
+      contents: read

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
+
 # Migration Guide: TYPO3 v12 to v13
 
 TypoScript, TSconfig, and Fluid template changes for the upgrade from TYPO3 v12 to v13.

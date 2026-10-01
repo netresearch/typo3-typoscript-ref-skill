@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+
 set -euo pipefail
 
 # Download TYPO3 documentation .rst files from GitHub, convert to Markdown
@@ -59,7 +62,9 @@ if [[ -z "$VERSION" ]]; then
     exit 1
 fi
 
-if [[ ! "$VERSION" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+# The version names a directory under the cache: it must start with a letter
+# or digit, so "." and ".." cannot point the output outside the cache.
+if [[ ! "$VERSION" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
     echo "Error: invalid version string: ${VERSION}" >&2
     exit 1
 fi
@@ -211,13 +216,17 @@ download_and_convert() {
 
     mkdir -p "$(dirname "$full_path")"
 
-    # Download raw content via GitHub API, decode base64
+    # Download raw content via GitHub API, decode base64. On any failure the
+    # cached copy from an earlier run is removed too, so a failed refresh does
+    # not leave an older page that reads as current.
     local content
     if ! content=$(gh api "repos/${REPO}/contents/${src_path}?ref=${BRANCH}" --jq '.content' 2>/dev/null); then
+        rm -f "$full_path"
         return 1
     fi
 
     if [[ -z "$content" ]] || [[ "$content" == "null" ]]; then
+        rm -f "$full_path"
         return 1
     fi
 

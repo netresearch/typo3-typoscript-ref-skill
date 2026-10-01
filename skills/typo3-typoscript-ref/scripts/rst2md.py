@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+
 """Convert TYPO3 reStructuredText documentation to compact Markdown.
 
 Reads raw .rst content from stdin, outputs clean Markdown to stdout.
@@ -497,6 +500,7 @@ def _convert_admonition(lines: list, start: int, output: list, match) -> int:
 
     i = start + 1
     content_lines = []
+    content_indent = None
 
     while i < len(lines):
         line = lines[i]
@@ -516,9 +520,12 @@ def _convert_admonition(lines: list, start: int, output: list, match) -> int:
         if indent <= base_indent:
             break
 
-        # Dedent
-        content_indent = base_indent + 4
-        if len(line) >= content_indent:
+        # Dedent by the indentation of the first content line: rST does not
+        # fix it at four spaces, and a fixed cut drops the first characters
+        # of a body indented by two or three.
+        if content_indent is None:
+            content_indent = indent
+        if indent >= content_indent:
             dedented = line[content_indent:]
         else:
             dedented = line.lstrip()

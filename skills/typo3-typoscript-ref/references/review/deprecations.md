@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
+
 # TypoScript/TSconfig/Fluid Deprecations
 
 This file lists confirmed deprecations and removals relevant to TypoScript, TSconfig, and Fluid

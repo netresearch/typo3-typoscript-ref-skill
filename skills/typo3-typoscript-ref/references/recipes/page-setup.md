@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
+
 # Recipe: Basic Page Rendering Setup
 
 > Version: v13+ / v14 (PAGEVIEW — standard) · v12 (FLUIDTEMPLATE — legacy)

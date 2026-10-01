@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+
 set -euo pipefail
 
 # All-in-one lookup script for TYPO3 TypoScript reference.
@@ -136,7 +139,9 @@ fi
 # Detect TYPO3 version (uses detect-version.sh or --version flag)
 validate_version() {
     local v="$1"
-    if [[ ! "$v" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    # The version names a directory under the cache: it must start with a
+    # letter or digit, so "." and ".." cannot point outside the cache.
+    if [[ ! "$v" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
         echo "Error: invalid version string: ${v}" >&2
         exit 1
     fi
@@ -472,20 +477,20 @@ mode_deprecations() {
 
     if [[ -n "$VERSION" ]]; then
         validate_version "$VERSION"
-        # Filter to the version's section
-        # Sections are expected as ## v12, ## v13, etc.
+        # Print every section headed "## v<major> ...". A heading is matched
+        # on its leading version only: "## v13 New Deprecations (... to be
+        # removed in v14)" belongs to v13, not to v14.
+        local major="${VERSION%%.*}"
         local section_found=false
         local in_section=false
         while IFS= read -r line; do
             if [[ "$line" =~ ^##[[:space:]] ]]; then
-                if echo "$line" | grep -qi "v${VERSION}\|version ${VERSION}\|${VERSION}\."; then
+                if [[ "$line" =~ ^##[[:space:]]+v${major}[[:space:]] ]]; then
                     in_section=true
                     section_found=true
                     echo "$line"
                 else
-                    if [[ "$in_section" == true ]]; then
-                        break
-                    fi
+                    in_section=false
                 fi
             elif [[ "$in_section" == true ]]; then
                 echo "$line"
@@ -660,7 +665,7 @@ mode_debug() {
                 # End of previous matching section
                 echo ""
             fi
-            if echo "$line" | grep -qiF "$DEBUG_MSG"; then
+            if echo "$line" | grep -qiF -- "$DEBUG_MSG"; then
                 in_section=true
                 found=true
                 echo "$line"
@@ -675,7 +680,7 @@ mode_debug() {
     # Also try grep-based search in case the error text is in the body
     if [[ "$found" == false ]]; then
         local grep_match
-        grep_match=$(grep -inF "$DEBUG_MSG" "$debug_file" 2>/dev/null || true)
+        grep_match=$(grep -inF -- "$DEBUG_MSG" "$debug_file" 2>/dev/null || true)
         if [[ -n "$grep_match" ]]; then
             echo "Matching lines in debugging.md:"
             echo "$grep_match"

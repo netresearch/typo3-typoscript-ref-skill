@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
+
 # TypoScript Lint Rules Reference
 
 Reference for [helmich/typo3-typoscript-lint](https://github.com/martin-helmich/typo3-typoscript-lint) rules.

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
+
 # TypoScript & Fluid Best Practices
 
 General patterns and conventions. Not a tutorial — use this as a quick reference.
