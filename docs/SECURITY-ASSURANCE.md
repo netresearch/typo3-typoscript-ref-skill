@@ -21,7 +21,7 @@ The repository ships no server component, no container image and no code that ru
 ## Security requirements
 
 1. The scripts do not change the user's project. `detect-version.sh` and every `lookup.sh` mode except `--update` only read files; `fetch-docs.sh` (called by `--update`) writes only into `cache/<version>/<source>/` below the package root (`<package root>/cache`, next to `skills/`), or below the directory given with `--cache-dir`, which can be inside the project if the user points it there.
-2. Only `fetch-docs.sh` uses the network: read-only `gh api` requests to the four documentation repositories listed in `references/version-map.json`.
+2. Only `fetch-docs.sh` uses the network: read-only `gh api` requests to the four documentation repositories listed in `references/version-map.json`. It starts `rst2md.py` with `uv run`; when no Python 3.11 or later is installed, uv downloads one into its own cache, unless the user has turned downloads off (`UV_PYTHON_DOWNLOADS=never`).
 3. A value from the command line or from a project file cannot be run as a command or as code.
 4. Project files are data: `composer.lock`, `composer.json` and a TypoScript lint configuration are parsed, never executed.
 5. Nothing committed to this repository contains a secret.
@@ -44,7 +44,7 @@ The repository ships no server component, no container image and no code that ru
 | A version or recipe name points outside the intended directory (CWE-22) | `--version` must start with a letter or digit, so `.` and `..` are rejected before any file is written; `--recipe` accepts only `[a-zA-Z0-9_-]`; `--checklist` accepts only `typoscript`, `tsconfig`, `fluid`; `--source` accepts only the four known sources | `lookup.sh`, `fetch-docs.sh`; `tests/lookup.sh`, `tests/fetch-docs.sh` (`..`, `.`, `.hidden`, `../SKILL`) |
 | A search text is read as an option by `grep` | Keywords that start with `-` are rejected as unknown options; the `--debug` message is passed after `--`; searches use fixed strings (`grep -F`) | `lookup.sh`; `tests/lookup.sh` (`-9`, `-zz-dash-message`) |
 | A project file runs code on the user's machine | `composer.*` is parsed with `json.load`, the lint configuration with `yaml.safe_load`; an unparsable `composer.lock` falls through to `composer.json`, and `main` is the answer only when neither yields a version; an unparsable lint configuration yields an error message | `detect-version.sh`, `lookup.sh`; `tests/detect-version.sh` (unparsable files) |
-| A failed download is taken for a complete cache | Each file is converted on its own; a failed download or conversion leaves no file and removes a copy cached by an earlier run, is named on stderr and counted in the summary | `fetch-docs.sh`; `tests/fetch-docs.sh` (a stale cached page is removed) |
+| A failed download is taken for a complete cache | Each file is converted on its own; a failed download or conversion leaves no file and removes a copy cached by an earlier run, is named on stderr and counted in the summary; a missing uv, or one that cannot start `rst2md.py` on Python 3.11 or later, stops the script with exit 1 before the first download, so the cached pages stay | `fetch-docs.sh`; `tests/fetch-docs.sh` (a stale cached page is removed; without a working uv the cached page stays and nothing is downloaded) |
 | An update changes files outside the cache | `fetch-docs.sh` writes only below `cache/<version>/<source>/` or `--cache-dir`; the other modes write nothing | `fetch-docs.sh`, `lookup.sh`; `tests/fetch-docs.sh`, `tests/lookup.sh` (both run the scripts from a temporary copy of the skill) |
 | A released archive is tampered with, or released from an unsigned tag | The release workflow verifies that the tag is signed and publishes a Cosign-signed `SHA256SUMS.txt` and build-provenance attestations for the archives | `.github/workflows/release.yml` (calls the skill-repo-skill release reusable) |
 | A secret is committed | Betterleaks scans every push to `main` and every pull request to `main` and fails when it finds one | `.github/workflows/security.yml` |
@@ -58,7 +58,7 @@ Which of these checks must pass before a pull request can merge is set in the br
 
 - **Least privilege:** the scripts read the project and write only into the cache (`<package root>/cache` or `--cache-dir`); workflows start from `permissions: {}`.
 - **Fail safe:** invalid arguments end the script with exit code 1 before any request or write; when neither `composer.lock` nor `composer.json` yields a version, the answer is `main` instead of a guess.
-- **Economy of mechanism:** four short scripts using bash, the Python standard library and `gh`; PyYAML is optional.
+- **Economy of mechanism:** four short scripts using bash, the Python standard library, `gh` and `uv` (for `rst2md.py`); PyYAML is optional.
 - **Separation of data and code:** values reach Python through the environment, `grep` through fixed-string patterns after `--`, and project files through JSON and safe YAML parsers.
 
 ## What a user cannot expect

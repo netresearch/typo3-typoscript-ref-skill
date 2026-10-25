@@ -217,7 +217,7 @@ guarantee in terms of security is in
 
 ## Tests
 
-The tests under `tests/` run the shipped scripts and check what they print, write and return. They need `bash`, `python3` and the usual coreutils; they make no network request and write only to temporary directories.
+The tests under `tests/` run the shipped scripts and check what they print, write and return. They need `bash`, `python3`, `uv` and the usual coreutils; they make no network request of their own (uv downloads a Python 3.11 or later only when none is installed) and write only to temporary directories.
 
 - `tests/detect-version.sh`: `composer.lock` before `composer.json`, `packages-dev` and `require-dev`, the constraint forms (`v13.4.2`, `^13.4`, `~12.4`, `>=12.4,<13`, `dev-main`), unparsable files, the five-parent search limit, and rejected arguments.
 - `tests/lookup.sh`: every mode (`--recipe`, `--checklist`, `--deprecations`, `--debug`, `--lint-rules`, keyword lookup with `--with-fluid` and `--review`, `--update`) against the shipped references and a fixture cache, run from a temporary copy of the skill; `--update` runs with a stub `gh` that always fails.
@@ -230,7 +230,7 @@ Run the tests and the hooks from the repository root:
 
 ```bash
 for t in tests/*.sh; do bash "$t"; done
-python3 tests/rst2md.py
+uv run --python 3.11 python tests/rst2md.py
 pre-commit run --all-files
 ```
 
@@ -240,10 +240,10 @@ In CI, `tests.yml` (Skill Tests) runs every `tests/**/*.sh` and `tests/**/*.py` 
 
 ## Dependencies
 
-- **Scripts:** `bash` 4+, `python3` (standard library only) and coreutils (`base64`, `find`, `grep`, `sed`, `tr`). `fetch-docs.sh`, and so `lookup.sh --update`, also needs the GitHub CLI `gh` with a login. `lookup.sh --lint-rules` uses PyYAML when it is installed and prints the raw file otherwise. The scripts install nothing.
+- **Scripts:** `bash` 4+, `python3` (standard library only) and coreutils (`base64`, `find`, `grep`, `sed`, `tr`). `fetch-docs.sh`, and so `lookup.sh --update`, also needs the GitHub CLI `gh` with a login, and `uv`, which runs `rst2md.py` on Python 3.11 or later. `lookup.sh --lint-rules` uses PyYAML when it is installed and prints the raw file otherwise. The scripts install nothing themselves; when no Python 3.11 or later is installed, uv downloads one into its own cache.
 - **Documentation sources:** the four upstream repositories and the branch per TYPO3 version are listed in `skills/typo3-typoscript-ref/references/version-map.json`; the downloaded pages live in the untracked `cache/` directory.
 - **Composer:** `composer.json` requires `netresearch/composer-agent-skill-plugin` (constraint `*`), the Composer plugin that installs packages of type `ai-agent-skill`. No lock file is committed (the skill validator rejects `composer.lock` in skill repositories): the package is installed as a dependency of other projects, whose lock files pin it.
-- **Tests:** `bash`, `python3` and coreutils; `gh` is replaced by a stub.
+- **Tests:** `bash`, `python3`, `uv` and coreutils; `gh` is replaced by a stub.
 - **Pre-commit hooks:** each hook repository in `.pre-commit-config.yaml` is pinned by `rev:`.
 - **CI:** the workflows call reusable workflows of `netresearch/skill-repo-skill`, `netresearch/.github` and `netresearch/typo3-ci-workflows` at `@main`; those pin their third-party actions by commit SHA.
 - **Updates:** Renovate (`renovate.json`, preset `github>netresearch/renovate-config`) opens pull requests for new versions, including the pre-commit hook revisions; `auto-merge-deps.yml` enables auto-merge for Renovate and Dependabot pull requests, which GitHub merges once the required checks pass. Composer Audit and dependency review check dependency changes on pull requests.

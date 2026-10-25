@@ -179,6 +179,50 @@ PATH="$TMP/nogh" "$BASH" "$FETCH" --version 13 >"$TMP/stdout" 2>"$TMP/stderr" ||
 expect_exit "missing gh is reported" 1
 expect_grep "missing gh names the tool" "$TMP/stderr" "'gh' (GitHub CLI) is required"
 
+# rst2md.py runs through uv. Without a working uv every conversion would fail
+# and remove the cached pages, so the script must stop before downloading.
+# stdwrap.md stands for the cached copy of a page the run would refresh.
+mkdir -p "$REPO/cache/13/typoscript/functions"
+printf 'cached\n' >"$REPO/cache/13/typoscript/functions/stdwrap.md"
+# Every other tool the script and the stub gh use stays reachable, so only the
+# missing uv can stop the run.
+mkdir -p "$TMP/nouv"
+for tool in bash dirname python3 mkdir basename tr base64 rm find sort; do
+    ln -s "$(command -v "$tool")" "$TMP/nouv/$tool"
+done
+ln -s "$TMP/bin/gh" "$TMP/nouv/gh"
+RC=0
+: >"$STUB_LOG"
+PATH="$TMP/nouv" "$BASH" "$FETCH" --version 13 >"$TMP/stdout" 2>"$TMP/stderr" || RC=$?
+expect_exit "missing uv is reported" 1
+expect_grep "missing uv names the tool" "$TMP/stderr" "'uv' is required"
+expect_file "missing uv keeps the cached pages" "$REPO/cache/13/typoscript/functions/stdwrap.md"
+if [[ -s "$STUB_LOG" ]]; then
+    not_ok "missing uv downloads nothing" "gh was called: $(head -1 "$STUB_LOG")"
+else
+    ok "missing uv downloads nothing"
+fi
+
+# uv exits 2 when it cannot find or download a matching Python.
+cat >"$TMP/nouv/uv" <<'STUB'
+#!/usr/bin/env bash
+echo "error: No interpreter found for Python >=3.11" >&2
+exit 2
+STUB
+chmod +x "$TMP/nouv/uv"
+RC=0
+: >"$STUB_LOG"
+PATH="$TMP/nouv" "$BASH" "$FETCH" --version 13 >"$TMP/stdout" 2>"$TMP/stderr" || RC=$?
+expect_exit "uv without a matching Python is reported" 1
+expect_grep "uv's own error is passed on" "$TMP/stderr" "No interpreter found for Python >=3.11"
+expect_file "uv without a matching Python keeps the cached pages" "$REPO/cache/13/typoscript/functions/stdwrap.md"
+if [[ -s "$STUB_LOG" ]]; then
+    not_ok "uv without a matching Python downloads nothing" "gh was called: $(head -1 "$STUB_LOG")"
+else
+    ok "uv without a matching Python downloads nothing"
+fi
+rm -f "$REPO/cache/13/typoscript/functions/stdwrap.md"
+
 # --- download and convert ------------------------------------------------------------------
 
 # A page cached by an earlier run: the failed refresh below must remove it.
