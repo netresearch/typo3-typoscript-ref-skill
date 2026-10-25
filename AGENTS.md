@@ -47,7 +47,7 @@ set also carries the v12 and v13 migration paths.
 - `bash skills/typo3-typoscript-ref/scripts/lookup.sh <term>` — search the reference set
 - `bash skills/typo3-typoscript-ref/scripts/detect-version.sh --path <project>` — read the project's TYPO3 version (default: the working directory)
 - `bash skills/typo3-typoscript-ref/scripts/fetch-docs.sh --version <major>` — refresh one source from upstream docs (`lookup.sh --update` fetches all four)
-- `for t in tests/*.sh; do bash "$t"; done; python3 tests/rst2md.py` — the behavioural tests (offline; see README "Tests")
+- `for t in tests/*.sh; do bash "$t"; done; uv run --python 3.11 python tests/rst2md.py` — the behavioural tests (offline; see README "Tests")
 - `pre-commit run --all-files` — the local hooks (skill validation, version parity, markdownlint, yamllint, actionlint, JSON/YAML syntax, ruff, ShellCheck)
 
 ## Conventions

@@ -23,7 +23,7 @@ This document describes the components the repository ships, the actors that use
 | `lookup.sh` | `skills/typo3-typoscript-ref/scripts/lookup.sh` | Single entry point for the agent. Modes: keyword lookup, `--recipe`, `--deprecations`, `--checklist`, `--lint-rules`, `--debug`, `--update`. |
 | `detect-version.sh` | `skills/typo3-typoscript-ref/scripts/detect-version.sh` | Prints the project's TYPO3 major version, or `main`. |
 | `fetch-docs.sh` | `skills/typo3-typoscript-ref/scripts/fetch-docs.sh` | Downloads one upstream source for one version and writes it as Markdown into the cache; optionally applies annotations. |
-| `rst2md.py` | `skills/typo3-typoscript-ref/scripts/rst2md.py` | Converts reStructuredText on stdin to Markdown on stdout (Python standard library only). |
+| `rst2md.py` | `skills/typo3-typoscript-ref/scripts/rst2md.py` | Converts reStructuredText on stdin to Markdown on stdout (Python standard library only). Started with `uv run`, which reads the `requires-python = ">=3.11"` block in the file. |
 | Documentation cache | `<package root>/cache/<version>/<source>/` | Created by `fetch-docs.sh`; not in git (`.gitignore`). `<package root>` is the directory that holds `skills/`: the clone, the plugin directory or the Composer package. |
 | Tests | `tests/*.sh`, `tests/rst2md.py` | Behavioural tests for the four scripts, run offline (see README "Tests"). |
 | Packaging | `plugin.json`, `.claude-plugin/plugin.json`, `composer.json` | Plugin manifest (root file is the source, the other is generated) and the Composer package of type `ai-agent-skill`. |
@@ -40,10 +40,10 @@ This document describes the components the repository ships, the actors that use
 
 `fetch-docs.sh`:
 
-1. validates `--version` (letters, digits, `.`, `_`, `-`, starting with a letter or digit) and `--source`, and requires `gh`;
+1. validates `--version` (letters, digits, `.`, `_`, `-`, starting with a letter or digit) and `--source`, requires `gh`, and requires that `uv run rst2md.py` starts (uv on `PATH` and a Python 3.11 or later that uv finds or downloads), so a broken setup stops the script with exit 1 before any download instead of failing every conversion and removing the cached pages;
 2. maps the version to a branch or tag with `version-map.json` (`typo3_to_docs`); a value not in the map is used as the branch;
 3. lists the repository tree with `gh api repos/<repo>/git/trees/<branch>?recursive=1` and keeps `.rst` files under `Documentation/` (for `coreapi` only `Documentation/ApiOverview/Fluid/`), skipping `_includes/`, `_snippets/`, `CodeSnippets/`, `Images/`, `_ext/` and the meta pages `Sitemap`, `genindex`, `search`, `Targets`, `404`;
-4. downloads each file with `gh api repos/<repo>/contents/<path>?ref=<branch>`, five at a time, base64-decodes it, pipes it through `rst2md.py` and writes `cache/<version>/<source>/<lowercased path>.md` (`Dir/Name/Index.rst` becomes `dir/name.md`); a failed download or conversion leaves no file, removes a copy cached by an earlier run, and counts as an error; the script still exits 0 and prints the counts;
+4. downloads each file with `gh api repos/<repo>/contents/<path>?ref=<branch>`, five at a time, base64-decodes it, pipes it through `uv run rst2md.py` and writes `cache/<version>/<source>/<lowercased path>.md` (`Dir/Name/Index.rst` becomes `dir/name.md`); a failed download or conversion leaves no file, removes a copy cached by an earlier run, and counts as an error; the script still exits 0 and prints the counts;
 5. with `--annotate`, prepends the `annotations.json` entry for the version as a blockquote to the mapped cache pages, replacing an earlier annotation.
 
 `--cache-dir <path>` replaces the default cache directory.

@@ -84,6 +84,20 @@ case "$SOURCE" in
         ;;
 esac
 
+# rst2md.py runs through uv on Python 3.11 or later. Probe it once before
+# anything is downloaded: without a working uv every conversion would fail,
+# and a failed conversion removes the page cached by an earlier run.
+if ! command -v uv &>/dev/null; then
+    echo "Error: 'uv' is required but not found." >&2
+    echo "Install it: https://docs.astral.sh/uv/getting-started/installation/" >&2
+    exit 1
+fi
+if ! probe_err=$(uv run "$RST2MD" </dev/null 2>&1 >/dev/null); then
+    echo "Error: uv cannot run rst2md.py on Python 3.11 or later:" >&2
+    echo "$probe_err" >&2
+    exit 1
+fi
+
 # Resolve repo and branch from version-map.json
 REPO=$(_VERSION_MAP="$VERSION_MAP" _SOURCE="$SOURCE" python3 -c "
 import json, os, sys
@@ -231,7 +245,7 @@ download_and_convert() {
     fi
 
     # Decode base64 and convert via rst2md.py
-    if ! echo "$content" | base64 -d | python3 "$RST2MD" > "$full_path" 2>/dev/null; then
+    if ! echo "$content" | base64 -d | uv run "$RST2MD" > "$full_path" 2>/dev/null; then
         rm -f "$full_path"
         return 1
     fi

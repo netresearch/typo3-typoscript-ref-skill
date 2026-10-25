@@ -7,7 +7,7 @@ Each case feeds a piece of TYPO3 reStructuredText to the converter and checks
 the Markdown it produces. The last case runs the script as fetch-docs.sh does,
 reading stdin and writing stdout.
 
-Run from anywhere: python3 tests/rst2md.py
+Run from anywhere: uv run --python 3.11 python tests/rst2md.py
 """
 
 import importlib.util
@@ -178,7 +178,7 @@ def main() -> int:
 
     # As fetch-docs.sh calls it: rST on stdin, Markdown on stdout.
     proc = subprocess.run(
-        [sys.executable, str(SCRIPT)],
+        ["uv", "run", str(SCRIPT)],
         input="Title\n=====\n\nUse ``x``.\n",
         capture_output=True,
         text=True,
