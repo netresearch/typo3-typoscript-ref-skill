@@ -65,7 +65,7 @@ Right: 10.stdWrap.wrap = <div>|</div>
 Wrong: `wrap = {"query":"{register:q}","results":[|]}` with `insertData = 1`, or the same string as `dataWrap`
 Symptom: the output still sits in a `<script>` tag or a JSON response, but it is shredded — on TYPO3 14.3.7 `{"status":"ok","query":"{register:q}","results":[…]}` came out as `","results":[]}`
 Why: `insertData` hands everything between `{` and `}` to `getData()`, and JSON is nothing but braces. `insertData` also runs after `wrap`, so braces added by `wrap` are affected too, and `dataWrap` runs `insertData()` on its wrap string
-Right: a `###PLACEHOLDER###` in the value or wrap plus `replacement` with `replace.data = register:q`. `replacement` runs before `wrap`, so for a placeholder inside `wrap` put it under `orderedStdWrap.10.replacement` (see `recipes/ajax-endpoint.md`)
+Right: a `###PLACEHOLDER###` in the value or wrap plus `replacement` with `replace.data = register:q`. `replacement` runs before `wrap`, so for a placeholder inside `wrap` put it under `orderedStdWrap.10.replacement` (see `recipes/ajax-endpoint.md`). The replaced value is inserted as it is: `htmlSpecialChars` keeps quotes and `<` out of it, not backslashes or line breaks, so free text belongs in a `json_encode()` call in PHP
 
 ### Meta Tag Sub-Properties in page.meta
 

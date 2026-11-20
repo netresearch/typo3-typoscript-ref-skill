@@ -169,6 +169,10 @@ searchApi {
             # through a placeholder. orderedStdWrap runs after wrap, so both
             # replacements see the wrapped string. wrap also applies to an
             # empty result, which then renders "results":[].
+            # htmlSpecialChars escapes quotes and angle brackets, not
+            # backslashes or line breaks: a query or description holding
+            # either still breaks the JSON. Where that input is possible,
+            # build the response in PHP with json_encode().
             stdWrap {
                 wrap = {"status":"ok","query":"###QUERY###","results":[|]}
                 orderedStdWrap.10.replacement {
