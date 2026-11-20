@@ -308,6 +308,7 @@ page.10 {
 - Always use absolute URLs in structured data (`forceAbsoluteUrl = 1`).
 - Test structured data with Google's Rich Results Test (<https://search.google.com/test/rich-results>) and Schema.org Validator.
 - `htmlSpecialChars = 1` is essential for any dynamic data inserted into JSON to prevent XSS and JSON syntax errors.
+- Never set `insertData = 1` or `dataWrap` on a JSON-LD block: they treat everything between `{` and `}` as a `getData` expression and shred the JSON. Put a `###PLACEHOLDER###` in the value and fill it with `replacement` (`replace.data = …`), with `htmlSpecialChars = 1` on the value; that still lets backslashes and line breaks through, so build free text into JSON-LD with `json_encode()` in PHP. See "insertData and dataWrap on JSON" in `review/common-mistakes.md`.
 - For complex dynamic structured data, the Fluid-based approach is cleaner and more maintainable than pure TypoScript.
 - The Organization schema should only appear on the homepage (`if.value = 1` / `if.equals.data = page:uid`).
 - BreadcrumbList should appear on all pages except the homepage.

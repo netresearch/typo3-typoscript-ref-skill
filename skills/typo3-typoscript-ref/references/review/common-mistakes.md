@@ -60,6 +60,32 @@ Solution: Check sys_template include order; Site Set TypoScript loads first
 Wrong: 10.wrap = <div>|</div> (may not work if 10 is a cObject)
 Right: 10.stdWrap.wrap = <div>|</div>
 
+### insertData and dataWrap on JSON
+
+Wrong: `wrap = {"query":"{register:q}","results":[|]}` with `insertData = 1`, or the same string as `dataWrap`
+Symptom: the output still sits in a `<script>` tag or a JSON response, but it is shredded — on TYPO3 14.3.7 `{"status":"ok","query":"{register:q}","results":[…]}` came out as `","results":[]}`
+Why: `insertData` hands everything between `{` and `}` to `getData()`, and JSON is nothing but braces. `insertData` also runs after `wrap`, so braces added by `wrap` are affected too, and `dataWrap` runs `insertData()` on its wrap string
+Right: a `###PLACEHOLDER###` in the value or wrap plus `replacement` with `replace.data = register:q`. `replacement` runs before `wrap`, so for a placeholder inside `wrap` put it under `orderedStdWrap.10.replacement` (see `recipes/ajax-endpoint.md`). The replaced value is inserted as it is: `htmlSpecialChars` keeps quotes and `<` out of it, not backslashes or line breaks, so free text belongs in a `json_encode()` call in PHP
+
+### Meta Tag Sub-Properties in page.meta
+
+Wrong: `page.meta.og:image:width = 1200` (also `og:image:height`, `og:image:alt`) with EXT:seo installed
+Symptom: every page on which no `og:image` was added before that line renders the TYPO3 exception page instead of content
+Why: `RequestHandler::generateMetaTagHtml()` passes no sub-properties, so the full key reaches `AbstractMetaTagManager::addProperty()`. EXT:seo's OpenGraph manager claims the key and accepts it only when it already holds an `og:image`; otherwise it throws `UnexpectedValueException` 1524209729 (checked against 14.3.7; observed uncaught during page generation on 14.3.5). Without EXT:seo the generic manager takes any key and nothing throws
+Right: let EXT:seo emit `og:image` with its sub-properties from the page's own `og_image` field; set only top-level properties in `page.meta`
+
+### robots From the Page Record
+
+Problem: removing `page.meta.robots` does not remove the robots tag
+Why: EXT:seo's `MetaTagGenerator` adds `robots` from the page record whenever `no_index` or `no_follow` is set
+Solution: check both fields on the pages in question as well as the TypoScript
+
+### Smoke Check That Accepts the Exception Page
+
+Wrong: `curl -s https://example.com/ | grep -qi typo3`
+Why: the debug exception handler titles its page `TYPO3 Exception`, so the grep passes a site that throws on every request
+Right: require HTTP 200 and a marker from the site's own template, and fail on `TYPO3 Exception` and on the production handler's `Oops, an error occurred!`
+
 ## TSconfig Mistakes
 
 ### TCEFORM Wrong Path
