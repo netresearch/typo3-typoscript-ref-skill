@@ -164,22 +164,23 @@ searchApi {
                 stdWrap.noTrimWrap = |{|},|
             }
 
+            # No insertData here: it hands everything between { and } to
+            # getData, and JSON is nothing but braces. The query goes in
+            # through a placeholder. orderedStdWrap runs after wrap, so both
+            # replacements see the wrapped string. wrap also applies to an
+            # empty result, which then renders "results":[].
             stdWrap {
-                wrap = {"status":"ok","query":"{register:searchQuery}","results":[|]}
-                insertData = 1
-                replacement {
+                wrap = {"status":"ok","query":"###QUERY###","results":[|]}
+                orderedStdWrap.10.replacement {
                     10 {
+                        search = ###QUERY###
+                        replace.data = register:searchQuery
+                    }
+                    20 {
                         search = ,]}
                         replace = ]}
                     }
                 }
-            }
-
-            # No results fallback
-            ifEmpty.cObject = TEXT
-            ifEmpty.cObject {
-                value = {"status":"ok","query":"{register:searchQuery}","results":[]}
-                insertData = 1
             }
         }
     }
